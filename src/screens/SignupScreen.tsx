@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Icon from 'react-native-vector-icons/Feather';
 import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
@@ -16,6 +17,8 @@ const SignupScreen = ({ navigation }: any) => {
     confirmPassword: '',
     role: 'user',
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { mutate: signup, isPending } = useSignup();
 
@@ -90,16 +93,20 @@ const SignupScreen = ({ navigation }: any) => {
         <CustomInput
           label="Password"
           placeholder="Enter password"
-          secureTextEntry
+          secureTextEntry={!showPassword}
           value={formData.password}
           onChangeText={(val) => updateField('password', val)}
+          rightIcon={<Icon name={showPassword ? "eye-off" : "eye"} size={20} color={colors.textLight} />}
+          onRightIconPress={() => setShowPassword(!showPassword)}
         />
         <CustomInput
           label="Confirm Password"
           placeholder="Confirm your password"
-          secureTextEntry
+          secureTextEntry={!showConfirmPassword}
           value={formData.confirmPassword}
           onChangeText={(val) => updateField('confirmPassword', val)}
+          rightIcon={<Icon name={showConfirmPassword ? "eye-off" : "eye"} size={20} color={colors.textLight} />}
+          onRightIconPress={() => setShowConfirmPassword(!showConfirmPassword)}
         />
 
         <CustomButton

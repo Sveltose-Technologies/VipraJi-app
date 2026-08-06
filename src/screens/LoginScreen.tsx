@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
+import Icon from 'react-native-vector-icons/Feather';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import { useLogin } from '../api/auth';
 import Toast from 'react-native-toast-message';
 import { colors } from '../theme/colors';
+import { useAuth } from '../context/AuthContext';
 
 const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const { mutate: login, isPending } = useLogin();
+  const { mutate: performLogin, isPending } = useLogin();
+  const { login: contextLogin } = useAuth();
 
   const handleLogin = () => {
     if (!email || !password) {
@@ -18,15 +22,12 @@ const LoginScreen = ({ navigation }: any) => {
       return;
     }
 
-    login(
+    performLogin(
       { email, password },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
+          await contextLogin();
           Toast.show({ type: 'success', text1: 'Welcome Back!', text2: 'Logged in successfully' });
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'MainTabs' }],
-          });
         },
       }
     );
@@ -54,9 +55,11 @@ const LoginScreen = ({ navigation }: any) => {
         <CustomInput
           label="Password"
           placeholder="Enter your password"
-          secureTextEntry
+          secureTextEntry={!showPassword}
           value={password}
           onChangeText={setPassword}
+          rightIcon={<Icon name={showPassword ? "eye-off" : "eye"} size={20} color={colors.textLight} />}
+          onRightIconPress={() => setShowPassword(!showPassword)}
         />
         
         <View style={styles.forgotPasswordContainer}>

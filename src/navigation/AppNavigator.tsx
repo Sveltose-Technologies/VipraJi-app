@@ -1,8 +1,10 @@
 import React from 'react';
+import { ActivityIndicator, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { colors } from '../theme/colors';
+import { useAuth } from '../context/AuthContext';
 
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
@@ -15,6 +17,7 @@ import DashboardScreen from '../screens/DashboardScreen';
 import SearchScreen from '../screens/SearchScreen';
 import CalendarScreen from '../screens/CalendarScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import SettingsScreen from '../screens/SettingsScreen';
 
 export type RootStackParamList = {
   Auth: undefined;
@@ -35,6 +38,7 @@ export type MainTabParamList = {
   Search: undefined;
   Calendar: undefined;
   Profile: undefined;
+  Settings: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -62,6 +66,7 @@ const MainTabNavigator = () => (
         else if (route.name === 'Search') iconName = focused ? 'search' : 'search-outline';
         else if (route.name === 'Calendar') iconName = focused ? 'calendar' : 'calendar-outline';
         else if (route.name === 'Profile') iconName = focused ? 'person' : 'person-outline';
+        else if (route.name === 'Settings') iconName = focused ? 'settings' : 'settings-outline';
 
         return <Icon name={iconName} size={size} color={color} />;
       },
@@ -81,14 +86,28 @@ const MainTabNavigator = () => (
     <Tab.Screen name="Search" component={SearchScreen} />
     <Tab.Screen name="Calendar" component={CalendarScreen} />
     <Tab.Screen name="Profile" component={ProfileScreen} />
+    <Tab.Screen name="Settings" component={SettingsScreen} />
   </Tab.Navigator>
 );
 
 const AppNavigator = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
   return (
-    <Stack.Navigator initialRouteName="Auth" screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Auth" component={AuthNavigator} />
-      <Stack.Screen name="MainTabs" component={MainTabNavigator} />
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {isAuthenticated ? (
+        <Stack.Screen name="MainTabs" component={MainTabNavigator} />
+      ) : (
+        <Stack.Screen name="Auth" component={AuthNavigator} />
+      )}
     </Stack.Navigator>
   );
 };
