@@ -4,10 +4,20 @@ import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import GlobalSearch from '../components/GlobalSearch';
 import Icon from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/AppNavigator';
+
+import { MOCK_NOTIFICATIONS } from '../data/mockNotifications';
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const DashboardScreen = () => {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const { t } = useTranslation();
+  const navigation = useNavigation<NavigationProp>();
+  
+  const unreadCount = MOCK_NOTIFICATIONS.filter(n => !n.isRead).length;
 
   const renderSectionHeader = (title: string, iconName: string) => (
     <View style={styles.sectionHeader}>
@@ -19,8 +29,21 @@ const DashboardScreen = () => {
   return (
     <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.content}>
       <View style={styles.header}>
-        <Text style={[styles.greeting, { color: colors.primaryDark }]}>{t('welcome', 'Namaste, Pandit Ji')}</Text>
-        <Text style={[styles.dateText, { color: colors.textLight }]}>Tuesday, 24 October</Text>
+        <View>
+          <Text style={[styles.greeting, { color: colors.primaryDark }]}>{t('welcome', 'Namaste, Pandit Ji')}</Text>
+          <Text style={[styles.dateText, { color: colors.textLight }]}>Tuesday, 24 October</Text>
+        </View>
+        <TouchableOpacity 
+          style={[styles.notificationBtn, { backgroundColor: colors.surface, borderColor: colors.border }]}
+          onPress={() => navigation.navigate('Notifications')}
+        >
+          <Icon name="bell" size={24} color={colors.text} />
+          {unreadCount > 0 && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{unreadCount}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
 
       <GlobalSearch />
@@ -65,11 +88,31 @@ const DashboardScreen = () => {
         </View>
         <View style={[styles.widgetBox, { backgroundColor: colors.surface }]}>
           <Text style={[styles.widgetLabel, { color: colors.textLight }]}>Subscription</Text>
-          <Text style={[styles.widgetValueSmall, { color: '#10B981' }]}>Active (30 days)</Text>
+          <Text style={[styles.widgetValueSmall, { color: colors.primary }]}>Active (30 days)</Text>
         </View>
       </View>
 
-      <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.secondary }]}>
+      {/* Quick Workflows / Modules */}
+      {renderSectionHeader('Core Workflows', 'layers')}
+      <View style={styles.workflowGrid}>
+        <TouchableOpacity style={[styles.workflowBtn, { backgroundColor: colors.surface }]} onPress={() => navigation.navigate('Kundali')}>
+          <Icon name="star" size={24} color={colors.secondary} />
+          <Text style={[styles.workflowText, { color: colors.text }]}>Kundali</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.workflowBtn, { backgroundColor: colors.surface }]} onPress={() => navigation.navigate('Muhurt')}>
+          <Icon name="clock" size={24} color={colors.secondary} />
+          <Text style={[styles.workflowText, { color: colors.text }]}>Muhurt</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.workflowBtn, { backgroundColor: colors.surface }]} onPress={() => navigation.navigate('Samagri')}>
+          <Icon name="shopping-bag" size={24} color={colors.secondary} />
+          <Text style={[styles.workflowText, { color: colors.text }]}>Samagri</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity 
+        style={[styles.actionButton, { backgroundColor: colors.secondary }]}
+        onPress={() => navigation.navigate('Calendar')}
+      >
         <Icon name="calendar" size={20} color={colors.surface} />
         <Text style={[styles.actionButtonText, { color: colors.surface }]}>View Today's Full Panchang</Text>
       </TouchableOpacity>
@@ -119,6 +162,9 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 16,
     marginTop: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   greeting: {
     fontSize: 26,
@@ -127,6 +173,32 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 16,
     marginTop: 4,
+  },
+  notificationBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  badge: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    backgroundColor: '#DC2626',
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#FFF',
+  },
+  badgeText: {
+    color: '#FFF',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
   spiritualCard: {
     padding: 16,
@@ -233,6 +305,28 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
+  workflowGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  workflowBtn: {
+    width: '31%',
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  workflowText: {
+    marginTop: 8,
+    fontSize: 14,
+    fontWeight: 'bold',
+  }
 });
 
 export default DashboardScreen;

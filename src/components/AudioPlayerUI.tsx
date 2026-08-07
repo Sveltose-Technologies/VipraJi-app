@@ -1,0 +1,284 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, AppState, AppStateStatus } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
+import Icon from 'react-native-vector-icons/Feather';
+import Sound from 'react-native-sound';
+
+// Enable playback in silence mode
+Sound.setCategory('Playback');
+
+interface AudioPlayerUIProps {
+  title: string;
+  audioUrl?: string;
+}
+
+const AudioPlayerUI: React.FC<AudioPlayerUIProps> = ({ title, audioUrl }) => {
+  const { colors, isDark } = useTheme();
+  
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isSlowMode, setIsSlowMode] = useState(false);
+  const [isRepeat, setIsRepeat] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+  const [duration, setDuration] = useState(1); // Default to 1 to avoid NaN
+  const [isLoading, setIsLoading] = useState(false);
+
+  const soundRef = useRef<Sound | null>(null);
+  const progressAnim = useRef(new Animated.Value(0)).current;
+
+  // Initialize and load sound
+  useEffect(() => {
+    if (!audioUrl) return;
+
+    setIsLoading(true);
+    
+    // Release previous sound if it exists
+    if (soundRef.current) {
+      soundRef.current.release();
+    }
+
+    const sound = new Sound(audioUrl, undefined, (error) => {
+      setIsLoading(false);
+      if (error) {
+        console.log('failed to load the sound', error);
+        return;
+      }
+      
+      // Loaded successfully
+      setDuration(sound.getDuration() || 1);
+      soundRef.current = sound;
+    });
+
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.release();
+        soundRef.current = null;
+      }
+    };
+  }, [audioUrl]);
+
+  // Handle Play/Pause logic
+  useEffect(() => {
+    if (!soundRef.current || isLoading) return;
+
+    if (isPlaying) {
+      soundRef.current.play((success) => {
+        if (success) {
+          if (isRepeat && soundRef.current) {
+            soundRef.current.play(); // Play again if repeat is on
+          } else {
+            setIsPlaying(false);
+            setElapsed(duration);
+          }
+        } else {
+          console.log('playback failed due to audio decoding errors');
+          setIsPlaying(false);
+        }
+      });
+    } else {
+      soundRef.current.pause();
+    }
+  }, [isPlaying, isLoading, isRepeat, duration]);
+
+  // Handle Slow Mode
+  useEffect(() => {
+    if (soundRef.current) {
+      soundRef.current.setSpeed(isSlowMode ? 0.75 : 1.0);
+    }
+  }, [isSlowMode]);
+
+  // Handle Repeat Mode (react-native-sound loop feature)
+  useEffect(() => {
+    if (soundRef.current) {
+      soundRef.current.setNumberOfLoops(isRepeat ? -1 : 0);
+    }
+  }, [isRepeat]);
+
+  // Progress polling and animation
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isPlaying && soundRef.current) {
+      interval = setInterval(() => {
+        if (soundRef.current) {
+          soundRef.current.getCurrentTime((seconds) => {
+            setElapsed(seconds);
+          });
+        }
+      }, 250);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying]);
+
+  useEffect(() => {
+    Animated.timing(progressAnim, {
+      toValue: (elapsed / duration) * 100,
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
+  }, [elapsed, duration]);
+
+  // Stop playback when app goes to background
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (nextAppState.match(/inactive|background/) && isPlaying && soundRef.current) {
+        soundRef.current.pause();
+        setIsPlaying(false);
+      }
+    };
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+    return () => subscription.remove();
+  }, [isPlaying]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
+  const togglePlay = () => {
+    if (isLoading || !soundRef.current) return;
+    
+    // If finished and we press play, restart
+    if (!isPlaying && elapsed >= duration - 1) {
+      soundRef.current.setCurrentTime(0);
+      setElapsed(0);
+    }
+    
+    setIsPlaying(!isPlaying);
+  };
+
+  return (
+    <View style={[styles.container, { backgroundColor: isDark ? colors.surface : '#FFF', borderTopColor: colors.border }]}>
+      
+      {/* Progress Bar */}
+      <View style={styles.progressBarContainer}>
+        <Animated.View 
+          style={[
+            styles.progressBarFill, 
+            { 
+              backgroundColor: colors.primary,
+              width: progressAnim.interpolate({
+                inputRange: [0, 100],
+                outputRange: ['0%', '100%']
+              })
+            }
+          ]} 
+        />
+      </View>
+
+      <View style={styles.mainContent}>
+        <View style={styles.infoContainer}>
+          <Text style={[styles.nowPlaying, { color: colors.textLight }]}>
+            {isLoading ? 'Loading...' : isPlaying ? 'Playing' : 'Paused'} • {formatTime(elapsed)} / {formatTime(duration)}
+          </Text>
+          <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>{title}</Text>
+        </View>
+        
+        <View style={styles.controlsContainer}>
+          {/* Slow Mode Button */}
+          <TouchableOpacity 
+            style={styles.controlButton} 
+            onPress={() => setIsSlowMode(!isSlowMode)}
+            disabled={isLoading}
+          >
+            <Text style={[
+              styles.slowModeText, 
+              { 
+                color: isSlowMode ? colors.primary : colors.textLight,
+                fontWeight: isSlowMode ? 'bold' : 'normal',
+                opacity: isLoading ? 0.5 : 1
+              }
+            ]}>
+              0.75x
+            </Text>
+          </TouchableOpacity>
+
+          {/* Play/Pause Button */}
+          <TouchableOpacity 
+            style={[styles.playButton, { backgroundColor: isLoading ? colors.border : colors.primary }]}
+            onPress={togglePlay}
+            disabled={isLoading}
+          >
+            <Icon name={isPlaying ? "pause" : "play"} size={28} color="#FFF" style={!isPlaying && !isLoading ? { marginLeft: 4 } : {}} />
+          </TouchableOpacity>
+
+          {/* Repeat Button */}
+          <TouchableOpacity 
+            style={styles.controlButton}
+            onPress={() => setIsRepeat(!isRepeat)}
+            disabled={isLoading}
+          >
+            <Icon name="repeat" size={24} color={isRepeat ? colors.primary : colors.textLight} style={{ opacity: isLoading ? 0.5 : 1 }} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    borderTopWidth: 1,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+  },
+  progressBarContainer: {
+    height: 4,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    width: '100%',
+  },
+  progressBarFill: {
+    height: '100%',
+  },
+  mainContent: {
+    padding: 16,
+    paddingBottom: 24, // Extra padding for safe area
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  infoContainer: {
+    flex: 1,
+    marginRight: 16,
+  },
+  nowPlaying: {
+    fontSize: 12,
+    marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  controlsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  controlButton: {
+    padding: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 48,
+  },
+  slowModeText: {
+    fontSize: 14,
+  },
+  playButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 8,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  }
+});
+
+export default AudioPlayerUI;
