@@ -142,7 +142,7 @@ const CommunityScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { padding: 20, paddingTop: 30, paddingBottom: 10 },
-  headerTitle: { fontSize: 28, fontWeight: 'bold', marginBottom: 4 },
+  headerTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 4 },
   headerSubtitle: { fontSize: 16 },
   filterContainer: {
     flexDirection: 'row',

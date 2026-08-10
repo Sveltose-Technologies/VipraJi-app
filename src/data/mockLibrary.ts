@@ -58,6 +58,25 @@ Natasubhasu Nasakam Namami Tham Vinayakam.`
 Prasanna-vadanam dhyayet sarva-vighnopa-shantaye
 Vyasam vasishtha-naptaram shakteh pautram-akalmasham
 Parasharatmajam vande shukatatam taponidhim`
+  },
+  {
+    id: 's5',
+    title: 'Ganesh Kavach',
+    category: 'Ganesh Stotras',
+    audioUrl: DUMMY_AUDIO_URL,
+    content: `Esoumati prasarpaami kavacham sarvakaamikam.
+Shrunu vakshyaami te devi kavacham sarvasiddhidam.
+Ganeshou me shirah paatu, bhaalam paatu Gajaananah.`
+  },
+  {
+    id: 's6',
+    title: 'Vakratunda Mahakaya',
+    category: 'Ganesh Stotras',
+    audioUrl: DUMMY_AUDIO_URL,
+    content: `Vakratunda Mahakaya,
+Suryakoti Samaprabha,
+Nirvighnam Kuru Me Deva,
+Sarvakaryeshu Sarvada.`
   }
 ];
 

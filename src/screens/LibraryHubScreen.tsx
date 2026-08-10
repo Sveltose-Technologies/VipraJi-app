@@ -64,7 +64,7 @@ const LibraryHubScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { padding: 20, paddingTop: 30 },
-  headerTitle: { fontSize: 28, fontWeight: 'bold', marginBottom: 4 },
+  headerTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 4 },
   headerSubtitle: { fontSize: 16 },
   content: { padding: 16 },
   card: {

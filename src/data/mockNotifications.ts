@@ -21,7 +21,7 @@ export const MOCK_NOTIFICATIONS: NotificationItem[] = [
     id: 'n3',
     type: 'panchang',
     title: 'Daily Panchang Alert',
-    message: 'Today is Shukla Chaturthi. Rahu Kaal starts at 15:00. View full details on your dashboard.',
+    message: 'Today is Shukla Chaturthi. Rahu Kaal starts at 15:00. View full details on your home screen.',
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(), // 12 hours ago
     isRead: true,
   },

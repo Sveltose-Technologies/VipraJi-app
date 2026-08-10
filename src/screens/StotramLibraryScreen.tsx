@@ -100,7 +100,7 @@ const StotramLibraryScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { padding: 16, paddingTop: 20 },
-  headerTitle: { fontSize: 28, fontWeight: 'bold', marginBottom: 4 },
+  headerTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 4 },
   headerSubtitle: { fontSize: 16 },
   categoriesContainer: { marginBottom: 12 },
   categoriesScroll: { paddingHorizontal: 16, paddingBottom: 8 },

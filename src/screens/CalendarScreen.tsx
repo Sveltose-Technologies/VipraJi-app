@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import { useTheme } from '../theme/ThemeContext';
+import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/Feather';
 import { CalendarEvent, EventStatus } from '../types/calendar';
 import { generateMockCalendarEvents } from '../data/mockCalendar';
@@ -16,6 +17,7 @@ const STATUS_COLORS: Record<EventStatus, string> = {
 
 const CalendarScreen = () => {
   const { colors, isDark } = useTheme();
+  const { t } = useTranslation();
   const [events, setEvents] = useState<CalendarEvent[]>(generateMockCalendarEvents());
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [currentMonth, setCurrentMonth] = useState<string>(new Date().toISOString().split('T')[0].substring(0, 7));
@@ -114,7 +116,7 @@ const CalendarScreen = () => {
 
         {/* Monthly Summary */}
         <View style={styles.summaryContainer}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Monthly Summary</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('calendar.monthly_summary', 'Monthly Summary')}</Text>
           <View style={styles.statsRow}>
             <View style={[styles.statCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
               <Text style={[styles.statValue, { color: colors.primary }]}>{monthlyStats.totalBookings}</Text>
@@ -131,10 +133,31 @@ const CalendarScreen = () => {
           </View>
         </View>
 
+        {/* Selected Day Summary */}
+        <View style={styles.summaryContainer}>
+          <View style={[styles.daySummaryCard, { backgroundColor: colors.primary }]}>
+            <View style={styles.daySummaryContent}>
+              <View style={styles.daySummaryIconContainer}>
+                <Icon name="calendar" size={28} color={colors.primary} />
+              </View>
+              <View>
+                <Text style={styles.daySummaryDate}>
+                  {new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                </Text>
+                <Text style={styles.daySummaryText}>
+                  {selectedEvents.length === 0 
+                    ? 'No tasks scheduled for this day' 
+                    : `You have ${selectedEvents.length} task${selectedEvents.length > 1 ? 's' : ''} today`}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
         {/* Agenda */}
         <View style={styles.agendaContainer}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            Agenda for {selectedDate}
+            {t('calendar.agenda_for', 'Agenda for')} {selectedDate}
           </Text>
           
           {selectedEvents.length === 0 ? (
@@ -212,9 +235,40 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 12,
+  },
+  daySummaryCard: {
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+  },
+  daySummaryContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  daySummaryIconContainer: {
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    padding: 12,
+    marginRight: 16,
+  },
+  daySummaryDate: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  daySummaryText: {
+    color: '#FFF',
+    fontSize: 14,
+    opacity: 0.9,
   },
   statsRow: {
     flexDirection: 'row',
@@ -229,7 +283,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   statValue: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 4,
   },

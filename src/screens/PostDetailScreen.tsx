@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, alignSelf: 'flex-start', marginBottom: 12 },
   badgeText: { fontSize: 12, fontWeight: 'bold', letterSpacing: 0.5 },
   
-  postTitle: { fontSize: 22, fontWeight: 'bold', marginBottom: 12 },
+  postTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 12 },
   postContent: { fontSize: 16, lineHeight: 24, marginBottom: 16 },
   
   tagsContainer: { flexDirection: 'row', flexWrap: 'wrap', paddingBottom: 16, borderBottomWidth: 1 },

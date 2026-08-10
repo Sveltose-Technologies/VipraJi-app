@@ -6,5 +6,33 @@
   "login": "लॉग इन करें",
   "search": "सब कुछ खोजें",
   "search_placeholder": "आरती, मंत्र, पूजा खोजें...",
-  "favorites": "पसंदीदा"
+  "favorites": "पसंदीदा",
+  "tabs": {
+    "home": "होम",
+    "library": "पुस्तकालय",
+    "pooja": "पूजा",
+    "calendar": "पंचांग",
+    "dakshina": "दक्षिणा",
+    "menu": "मेनू"
+  },
+  "menu": {
+    "profile": "प्रोफ़ाइल और ब्रांडिंग",
+    "community": "समुदाय",
+    "subscription": "सदस्यता और वॉलेट",
+    "history": "कार्य इतिहास",
+    "help": "सहायता केंद्र",
+    "settings": "सेटिंग्स",
+    "title": "मेनू"
+  },
+  "home": {
+    "spiritual_card": "दैनिक आध्यात्मिक कार्ड",
+    "core_workflows": "मुख्य कार्यप्रवाह",
+    "todays_bookings": "आज की बुकिंग",
+    "todays_tasks": "आज के कार्य",
+    "community_discussions": "सामुदायिक चर्चाएँ"
+  },
+  "calendar": {
+    "monthly_summary": "मासिक सारांश",
+    "agenda_for": "के लिए एजेंडा"
+  }
 }

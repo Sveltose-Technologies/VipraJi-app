@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../theme/ThemeContext';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
@@ -12,8 +13,9 @@ import VerifyOtpScreen from '../screens/VerifyOtpScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import VerifyForgotOtpScreen from '../screens/VerifyForgotOtpScreen';
 import ResetPasswordScreen from '../screens/ResetPasswordScreen';
+import OnboardingScreen from '../screens/OnboardingScreen';
 
-import DashboardScreen from '../screens/DashboardScreen';
+import HomeScreen from '../screens/HomeScreen';
 import SearchScreen from '../screens/SearchScreen';
 import CalendarScreen from '../screens/CalendarScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -40,6 +42,7 @@ import NotificationsScreen from '../screens/NotificationsScreen';
 export type RootStackParamList = {
   Auth: undefined;
   MainTabs: undefined;
+  Onboarding: undefined;
   PoojaLibrary: undefined;
   PoojaDetail: { poojaId: string };
   Kundali: undefined;
@@ -52,7 +55,7 @@ export type RootStackParamList = {
   PostDetail: { postId: string };
   HelpCenter: undefined;
   Subscription: undefined;
-  DakshinaCalculator: undefined;
+  Community: undefined;
   History: undefined;
   Notifications: undefined;
   Profile: undefined;
@@ -69,10 +72,10 @@ export type AuthStackParamList = {
 };
 
 export type MainTabParamList = {
-  Dashboard: undefined;
+  Home: undefined;
   Library: undefined;
   Calendar: undefined;
-  Community: undefined;
+  DakshinaCalculator: undefined;
   Menu: undefined;
 };
 
@@ -93,16 +96,17 @@ const AuthNavigator = () => (
 
 const MainTabNavigator = () => {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName = '';
-          if (route.name === 'Dashboard') iconName = focused ? 'home' : 'home-outline';
-          else if (route.name === 'Library') iconName = focused ? 'book' : 'book-outline';
+          if (route.name === 'Home') iconName = focused ? 'home' : 'home-outline';
+          else if (route.name === 'Library') iconName = focused ? 'flower' : 'flower-outline';
           else if (route.name === 'Calendar') iconName = focused ? 'calendar' : 'calendar-outline';
-          else if (route.name === 'Community') iconName = focused ? 'chatbubbles' : 'chatbubbles-outline';
+          else if (route.name === 'DakshinaCalculator') iconName = focused ? 'calculator' : 'calculator-outline';
           else if (route.name === 'Menu') iconName = focused ? 'menu' : 'menu-outline';
 
           return <Icon name={iconName} size={size} color={color} />;
@@ -119,17 +123,17 @@ const MainTabNavigator = () => {
         safeAreaInsets: { bottom: 0 },
       })}
     >
-      <Tab.Screen name="Dashboard" component={DashboardScreen} />
-      <Tab.Screen name="Library" component={LibraryHubScreen} />
-      <Tab.Screen name="Calendar" component={CalendarScreen} />
-      <Tab.Screen name="Community" component={CommunityScreen} />
-      <Tab.Screen name="Menu" component={MenuScreen} />
+      <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarLabel: t('tabs.home', 'Home') }} />
+      <Tab.Screen name="Library" component={LibraryHubScreen} options={{ tabBarLabel: t('tabs.pooja', 'Pooja') }} />
+      <Tab.Screen name="Calendar" component={CalendarScreen} options={{ tabBarLabel: t('tabs.calendar', 'Calendar') }} />
+      <Tab.Screen name="DakshinaCalculator" component={DakshinaCalculatorScreen} options={{ tabBarLabel: t('tabs.dakshina', 'Dakshina') }} />
+      <Tab.Screen name="Menu" component={MenuScreen} options={{ tabBarLabel: t('tabs.menu', 'Menu') }} />
     </Tab.Navigator>
   );
 };
 
 const AppNavigator = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isGuest, isLoading, hasSeenOnboarding } = useAuth();
   const { colors } = useTheme();
 
   if (isLoading) {
@@ -142,7 +146,7 @@ const AppNavigator = () => {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {isAuthenticated ? (
+      {isAuthenticated || isGuest ? (
         <>
           <Stack.Screen name="MainTabs" component={MainTabNavigator} />
           <Stack.Screen name="PoojaLibrary" component={PoojaLibraryScreen} />
@@ -156,13 +160,15 @@ const AppNavigator = () => {
           <Stack.Screen name="AartiDetail" component={AartiDetailScreen} options={{ presentation: 'card' }} />
           <Stack.Screen name="HelpCenter" component={HelpCenterScreen} />
           <Stack.Screen name="Subscription" component={SubscriptionScreen} />
-          <Stack.Screen name="DakshinaCalculator" component={DakshinaCalculatorScreen} />
+          <Stack.Screen name="Community" component={CommunityScreen} />
           <Stack.Screen name="History" component={HistoryScreen} />
           <Stack.Screen name="Notifications" component={NotificationsScreen} />
           <Stack.Screen name="PostDetail" component={PostDetailScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
         </>
+      ) : !hasSeenOnboarding ? (
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
       ) : (
         <Stack.Screen name="Auth" component={AuthNavigator} />
       )}

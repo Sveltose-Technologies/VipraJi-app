@@ -4,19 +4,23 @@ import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import GlobalSearch from '../components/GlobalSearch';
 import Icon from 'react-native-vector-icons/Feather';
-import { useNavigation } from '@react-navigation/native';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { RootStackParamList, MainTabParamList } from '../navigation/AppNavigator';
 
 import { MOCK_NOTIFICATIONS } from '../data/mockNotifications';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type NavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<MainTabParamList, 'Home'>,
+  NativeStackNavigationProp<RootStackParamList>
+>;
 
-const DashboardScreen = () => {
+const HomeScreen = () => {
   const { colors, isDark } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
-  
+
   const unreadCount = MOCK_NOTIFICATIONS.filter(n => !n.isRead).length;
 
   const renderSectionHeader = (title: string, iconName: string) => (
@@ -33,7 +37,7 @@ const DashboardScreen = () => {
           <Text style={[styles.greeting, { color: colors.primaryDark }]}>{t('welcome', 'Namaste, Pandit Ji')}</Text>
           <Text style={[styles.dateText, { color: colors.textLight }]}>Tuesday, 24 October</Text>
         </View>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.notificationBtn, { backgroundColor: colors.surface, borderColor: colors.border }]}
           onPress={() => navigation.navigate('Notifications')}
         >
@@ -52,7 +56,7 @@ const DashboardScreen = () => {
       <View style={[styles.spiritualCard, { backgroundColor: colors.primary + '15', borderColor: colors.primary }]}>
         <View style={styles.spiritualHeader}>
           <Icon name="sun" size={24} color={colors.primaryDark} />
-          <Text style={[styles.spiritualTitle, { color: colors.primaryDark }]}>Daily Spiritual Card</Text>
+          <Text style={[styles.spiritualTitle, { color: colors.primaryDark }]}>{t('home.spiritual_card', 'Daily Spiritual Card')}</Text>
         </View>
         <View style={styles.spiritualItem}>
           <Text style={[styles.spiritualLabel, { color: colors.text }]}>Today's Thought:</Text>
@@ -93,7 +97,7 @@ const DashboardScreen = () => {
       </View>
 
       {/* Quick Workflows / Modules */}
-      {renderSectionHeader('Core Workflows', 'layers')}
+      {renderSectionHeader(t('home.core_workflows', 'Core Workflows'), 'layers')}
       <View style={styles.workflowGrid}>
         <TouchableOpacity style={[styles.workflowBtn, { backgroundColor: colors.surface }]} onPress={() => navigation.navigate('Kundali')}>
           <Icon name="star" size={24} color={colors.secondary} />
@@ -109,7 +113,7 @@ const DashboardScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity 
+      <TouchableOpacity
         style={[styles.actionButton, { backgroundColor: colors.secondary }]}
         onPress={() => navigation.navigate('Calendar')}
       >
@@ -119,7 +123,7 @@ const DashboardScreen = () => {
 
       {/* Today's Bookings & Tasks */}
       <View style={styles.listsContainer}>
-        {renderSectionHeader('Today\'s Bookings', 'calendar')}
+        {renderSectionHeader(t('home.todays_bookings', 'Today\'s Bookings'), 'calendar')}
         <View style={[styles.listItem, { backgroundColor: colors.surface, borderLeftColor: colors.primary }]}>
           <View>
             <Text style={[styles.listItemTitle, { color: colors.text }]}>Ganesh Pooja</Text>
@@ -128,7 +132,7 @@ const DashboardScreen = () => {
           <Text style={[styles.listItemTime, { color: colors.primary }]}>10:00 AM</Text>
         </View>
 
-        {renderSectionHeader('Today\'s Tasks', 'check-square')}
+        {renderSectionHeader(t('home.todays_tasks', 'Today\'s Tasks'), 'check-square')}
         <View style={[styles.listItem, { backgroundColor: colors.surface, borderLeftColor: colors.secondary }]}>
           <View>
             <Text style={[styles.listItemTitle, { color: colors.text }]}>Prepare Pooja Samagri</Text>
@@ -137,16 +141,19 @@ const DashboardScreen = () => {
           <Icon name="circle" size={24} color={colors.border} />
         </View>
 
-        {renderSectionHeader('Community Discussions', 'message-circle')}
-        <View style={[styles.listItem, { backgroundColor: colors.surface }]}>
+        {renderSectionHeader(t('home.community_discussions', 'Community Discussions'), 'message-circle')}
+        <TouchableOpacity
+          style={[styles.listItem, { backgroundColor: colors.surface }]}
+          onPress={() => navigation.navigate('Community')}
+        >
           <View style={{ flex: 1 }}>
             <Text style={[styles.listItemTitle, { color: colors.text }]}>Best Muhurat for Griha Pravesh this month?</Text>
             <Text style={[styles.listItemSub, { color: colors.textLight }]}>12 Pandits replied • 1 hour ago</Text>
           </View>
           <Icon name="chevron-right" size={20} color={colors.textLight} />
-        </View>
+        </TouchableOpacity>
       </View>
-      
+
       <View style={{ height: 40 }} />
     </ScrollView>
   );
@@ -167,11 +174,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   greeting: {
-    fontSize: 26,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   dateText: {
-    fontSize: 16,
+    fontSize: 12,
     marginTop: 4,
   },
   notificationBtn: {
@@ -212,7 +219,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   spiritualTitle: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 8,
   },
@@ -225,7 +232,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   spiritualValue: {
-    fontSize: 15,
+    fontSize: 14,
     lineHeight: 22,
   },
   widgetsGrid: {
@@ -329,4 +336,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default DashboardScreen;
+export default HomeScreen;

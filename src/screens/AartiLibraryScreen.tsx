@@ -120,7 +120,7 @@ const AartiLibraryScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { padding: 16, paddingTop: 20 },
-  headerTitle: { fontSize: 28, fontWeight: 'bold', marginBottom: 4 },
+  headerTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 4 },
   headerSubtitle: { fontSize: 16 },
   categoriesContainer: { marginBottom: 12 },
   categoriesScroll: { paddingHorizontal: 16, paddingBottom: 8 },
@@ -152,7 +152,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   cardOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
     backgroundColor: 'rgba(0,0,0,0.4)', // Dark overlay for text
     padding: 16,
     justifyContent: 'space-between',
@@ -192,7 +196,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     color: '#FFF',
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
     textShadowColor: 'rgba(0,0,0,0.75)',
     textShadowOffset: { width: 0, height: 1 },

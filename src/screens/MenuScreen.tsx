@@ -5,24 +5,26 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { useTheme } from '../theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Feather';
+import { useTranslation } from 'react-i18next';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const MenuScreen = () => {
   const { colors, isDark } = useTheme();
   const navigation = useNavigation<NavigationProp>();
+  const { t } = useTranslation();
 
   const menuItems = [
-    { title: 'Profile & Branding', icon: 'user', screen: 'Profile' },
-    { title: 'Dakshina Calculator', icon: 'calculator', screen: 'DakshinaCalculator' },
-    { title: 'Subscription & Wallet', icon: 'credit-card', screen: 'Subscription' },
-    { title: 'Work History', icon: 'clock', screen: 'History' },
-    { title: 'Help Center', icon: 'help-circle', screen: 'HelpCenter' },
-    { title: 'Settings', icon: 'settings', screen: 'Settings' },
+    { title: t('menu.profile', 'Profile & Branding'), icon: 'user', screen: 'Profile' },
+    { title: t('menu.community', 'Community'), icon: 'users', screen: 'Community' },
+    { title: t('menu.subscription', 'Subscription & Wallet'), icon: 'credit-card', screen: 'Subscription' },
+    { title: t('menu.history', 'Work History'), icon: 'clock', screen: 'History' },
+    { title: t('menu.help', 'Help Center'), icon: 'help-circle', screen: 'HelpCenter' },
+    { title: t('menu.settings', 'Settings'), icon: 'settings', screen: 'Settings' },
   ];
 
   const renderMenuItem = ({ title, icon, screen }: any) => (
-    <TouchableOpacity 
+    <TouchableOpacity
       key={screen}
       style={[styles.menuItem, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}
       onPress={() => navigation.navigate(screen)}
@@ -38,9 +40,9 @@ const MenuScreen = () => {
   return (
     <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.header}>
-        <Text style={[styles.headerTitle, { color: colors.primaryDark }]}>Menu</Text>
+        <Text style={[styles.headerTitle, { color: colors.primaryDark }]}>{t('menu.title', 'Menu')}</Text>
       </View>
-      
+
       <View style={[styles.menuContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         {menuItems.map(renderMenuItem)}
       </View>
@@ -58,7 +60,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   menuContainer: {
@@ -81,7 +83,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   menuTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
   }
 });

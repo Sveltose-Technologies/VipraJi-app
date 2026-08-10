@@ -95,7 +95,7 @@ const AudioPlayerUI: React.FC<AudioPlayerUIProps> = ({ title, audioUrl }) => {
 
   // Progress polling and animation
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
     if (isPlaying && soundRef.current) {
       interval = setInterval(() => {
         if (soundRef.current) {

@@ -99,7 +99,7 @@ const PoojaDetailScreen = () => {
   return (
     <FlatList
       data={listData}
-      keyExtractor={(item) => item.sectionId || item.id}
+      keyExtractor={(item: any) => item.sectionId || item.id}
       renderItem={renderItem}
       contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}
     />
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   poojaTitle: {
-    fontSize: 28,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 8,
   },
