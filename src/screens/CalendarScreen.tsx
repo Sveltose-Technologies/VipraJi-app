@@ -21,7 +21,7 @@ const CalendarScreen = () => {
   const [events, setEvents] = useState<CalendarEvent[]>(generateMockCalendarEvents());
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [currentMonth, setCurrentMonth] = useState<string>(new Date().toISOString().split('T')[0].substring(0, 7));
-  
+
   // Modal state
   const [modalVisible, setModalVisible] = useState(false);
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
@@ -32,7 +32,7 @@ const CalendarScreen = () => {
   // Generate marked dates for the calendar
   const markedDates = useMemo(() => {
     const marked: Record<string, any> = {};
-    
+
     events.forEach(event => {
       if (!marked[event.date]) {
         marked[event.date] = { dots: [] };
@@ -61,7 +61,7 @@ const CalendarScreen = () => {
     // Assuming a 30-day month for simplicity of "Free Days" calculation here
     const daysInMonth = new Date(parseInt(currentMonth.split('-')[0]), parseInt(currentMonth.split('-')[1]), 0).getDate();
     const freeDays = daysInMonth - busyDays;
-    
+
     return { totalBookings, busyDays, freeDays };
   }, [events, currentMonth]);
 
@@ -94,7 +94,7 @@ const CalendarScreen = () => {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        
+
         {/* Calendar Grid */}
         <Calendar
           current={selectedDate}
@@ -145,8 +145,8 @@ const CalendarScreen = () => {
                   {new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
                 </Text>
                 <Text style={styles.daySummaryText}>
-                  {selectedEvents.length === 0 
-                    ? 'No tasks scheduled for this day' 
+                  {selectedEvents.length === 0
+                    ? 'No tasks scheduled for this day'
                     : `You have ${selectedEvents.length} task${selectedEvents.length > 1 ? 's' : ''} today`}
                 </Text>
               </View>
@@ -159,7 +159,7 @@ const CalendarScreen = () => {
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
             {t('calendar.agenda_for', 'Agenda for')} {selectedDate}
           </Text>
-          
+
           {selectedEvents.length === 0 ? (
             <Text style={[styles.noEventsText, { color: colors.textLight }]}>
               No events scheduled for this day.
@@ -194,17 +194,19 @@ const CalendarScreen = () => {
             ))
           )}
         </View>
-        
+
         {/* Padding for FAB */}
         <View style={{ height: 100 }} />
       </ScrollView>
 
       {/* Floating Action Button */}
-      <TouchableOpacity 
-        style={[styles.fab, { backgroundColor: colors.primary }]}
+      <TouchableOpacity
+        style={[styles.fab, { backgroundColor: '#1E293B' }]} // Distinct dark color
         onPress={openAddModal}
+        activeOpacity={0.9}
       >
-        <Icon name="plus" size={24} color="#FFF" />
+        <Icon name="plus" size={20} color="#FFF" />
+        <Text style={styles.fabText}>Add Event</Text>
       </TouchableOpacity>
 
       {/* Event Modal */}
@@ -223,7 +225,7 @@ const CalendarScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   calendar: {
-    marginBottom: 16,
+    marginBottom: 10,
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -232,16 +234,16 @@ const styles = StyleSheet.create({
   },
   summaryContainer: {
     paddingHorizontal: 16,
-    marginBottom: 24,
+    marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
-    marginBottom: 12,
+    marginBottom: 10,
   },
   daySummaryCard: {
     borderRadius: 16,
-    padding: 20,
+    padding: 14,
     marginBottom: 16,
     elevation: 4,
     shadowColor: '#000',
@@ -261,7 +263,7 @@ const styles = StyleSheet.create({
   },
   daySummaryDate: {
     color: '#FFF',
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 4,
   },
@@ -277,7 +279,7 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
     alignItems: 'center',
-    padding: 16,
+    padding: 10,
     borderRadius: 12,
     borderWidth: 1,
     marginHorizontal: 4,
@@ -351,18 +353,26 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    bottom: 24,
-    right: 24,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    bottom: 7,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 5,
+    elevation: 8,
+    shadowColor: '#1E293B',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 6,
+  },
+  fabText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 8,
+    letterSpacing: 0.5,
   }
 });
 

@@ -27,11 +27,12 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ visible, onClose, onS
   };
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
-      <KeyboardAvoidingView 
-        style={[styles.container, { backgroundColor: colors.background }]} 
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
+    <Modal visible={visible} animationType="fade" transparent={true} onRequestClose={onClose}>
+      <View style={styles.overlay}>
+        <KeyboardAvoidingView 
+          style={[styles.modalContainer, { backgroundColor: colors.background }]} 
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
         <View style={[styles.header, { borderBottomColor: colors.border }]}>
           <TouchableOpacity onPress={onClose} style={styles.iconButton}>
             <Icon name="x" size={24} color={colors.text} />
@@ -85,20 +86,35 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ visible, onClose, onS
             textAlignVertical="top"
           />
         </ScrollView>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    padding: 16,
+  },
+  modalContainer: {
+    borderRadius: 20,
+    maxHeight: '90%',
+    overflow: 'hidden',
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    paddingTop: Platform.OS === 'ios' ? 50 : 16,
   },
   headerTitle: { fontSize: 18, fontWeight: 'bold' },
   iconButton: { padding: 4 },
