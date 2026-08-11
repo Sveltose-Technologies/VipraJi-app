@@ -34,5 +34,27 @@
   "calendar": {
     "monthly_summary": "Monthly Summary",
     "agenda_for": "Agenda for"
+  },
+  "dakshina_calc": {
+    "title": "Dakshina Calculator",
+    "subtitle": "Easily calculate your pooja dakshina including acharya, pandit, and additional expenses.",
+    "days": "Total Pooja Days",
+    "days_placeholder": "e.g., 3",
+    "acharya_amt": "Acharya Per Day Amount",
+    "acharya_placeholder": "e.g., 2100",
+    "pandit_amt": "Pandit Per Day Amount",
+    "pandit_placeholder": "e.g., 1100",
+    "samagri_amt": "Samagri Amount",
+    "samagri_placeholder": "e.g., 5000",
+    "transport_amt": "Transportation Amount",
+    "transport_placeholder": "e.g., 1000",
+    "optional": "Optional",
+    "summary": "Calculation Summary",
+    "acharya_total": "Acharya Total (Days × Amt)",
+    "pandit_total": "Pandit Total (Days × Amt)",
+    "pooja_final": "Pooja Final Amount",
+    "samagri": "Samagri",
+    "transportation": "Transportation",
+    "grand_total": "Grand Total"
   }
 }

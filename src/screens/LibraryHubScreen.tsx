@@ -5,6 +5,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { useTheme } from '../theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Feather';
+import CustomHeader from '../components/CustomHeader';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -30,8 +31,8 @@ const LibraryHubScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <CustomHeader title="Pooja" icon="book-open" />
       <View style={styles.header}>
-        <Text style={[styles.headerTitle, { color: colors.primaryDark }]}>Library Hub</Text>
         <Text style={[styles.headerSubtitle, { color: colors.textLight }]}>
           Access all your spiritual resources
         </Text>

@@ -1,6 +1,7 @@
 export const lightColors = {
   primary: '#16A34A', // Emerald Green
   primaryDark: '#15803D',
+  darkHeader: '#013220',
   secondary: '#2563EB', // Royal Blue
   background: '#F3F4F6',
   surface: '#FFFFFF', // White
@@ -13,9 +14,10 @@ export const lightColors = {
 };
 
 export const darkColors = {
-  primary: '#22C55E', 
+  primary: '#22C55E',
   primaryDark: '#16A34A',
-  secondary: '#3B82F6', 
+  darkHeader: '#022C22', // Very dark emerald green for dark mode header
+  secondary: '#3B82F6',
   background: '#111827', // Dark background
   surface: '#1F2937', // Darker surface
   text: '#F9FAFB', // Light text

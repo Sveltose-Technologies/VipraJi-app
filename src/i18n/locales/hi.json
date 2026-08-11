@@ -34,5 +34,27 @@
   "calendar": {
     "monthly_summary": "मासिक सारांश",
     "agenda_for": "के लिए एजेंडा"
+  },
+  "dakshina_calc": {
+    "title": "दक्षिणा कैलकुलेटर",
+    "subtitle": "आचार्य, पंडित और अतिरिक्त खर्चों सहित अपनी पूजा दक्षिणा की आसानी से गणना करें।",
+    "days": "कुल पूजा के दिन",
+    "days_placeholder": "उदा., 3",
+    "acharya_amt": "आचार्य प्रतिदिन राशि",
+    "acharya_placeholder": "उदा., 2100",
+    "pandit_amt": "पंडित प्रतिदिन राशि",
+    "pandit_placeholder": "उदा., 1100",
+    "samagri_amt": "सामग्री राशि",
+    "samagri_placeholder": "उदा., 5000",
+    "transport_amt": "परिवहन राशि",
+    "transport_placeholder": "उदा., 1000",
+    "optional": "वैकल्पिक",
+    "summary": "गणना सारांश",
+    "acharya_total": "आचार्य कुल (दिन × राशि)",
+    "pandit_total": "पंडित कुल (दिन × राशि)",
+    "pooja_final": "पूजा अंतिम राशि",
+    "samagri": "सामग्री",
+    "transportation": "परिवहन",
+    "grand_total": "कुल योग"
   }
 }

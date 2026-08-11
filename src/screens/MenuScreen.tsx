@@ -6,6 +6,7 @@ import { RootStackParamList } from '../navigation/AppNavigator';
 import { useTheme } from '../theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Feather';
 import { useTranslation } from 'react-i18next';
+import CustomHeader from '../components/CustomHeader';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -38,30 +39,23 @@ const MenuScreen = () => {
   );
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.header}>
-        <Text style={[styles.headerTitle, { color: colors.primaryDark }]}>{t('menu.title', 'Menu')}</Text>
-      </View>
-
-      <View style={[styles.menuContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-        {menuItems.map(renderMenuItem)}
-      </View>
-    </ScrollView>
+    <View style={styles.mainContainer}>
+      <CustomHeader title={t('menu.title', 'Menu')} icon="grid" />
+      <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={[styles.menuContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          {menuItems.map(renderMenuItem)}
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  mainContainer: {
     flex: 1,
   },
-  header: {
-    padding: 20,
-    paddingTop: 30,
-    paddingBottom: 10,
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  container: {
+    flex: 1,
   },
   menuContainer: {
     marginTop: 10,

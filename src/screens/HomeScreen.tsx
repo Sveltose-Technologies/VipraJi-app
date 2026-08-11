@@ -8,6 +8,7 @@ import { CompositeNavigationProp, useNavigation } from '@react-navigation/native
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { RootStackParamList, MainTabParamList } from '../navigation/AppNavigator';
+import CustomHeader from '../components/CustomHeader';
 
 import { MOCK_NOTIFICATIONS } from '../data/mockNotifications';
 
@@ -31,135 +32,132 @@ const HomeScreen = () => {
   );
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.content}>
-      <View style={styles.header}>
-        <View>
-          <Text style={[styles.greeting, { color: colors.primaryDark }]}>{t('welcome', 'Namaste, Pandit Ji')}</Text>
+    <View style={styles.mainContainer}>
+      <CustomHeader
+        isHome={true}
+        notificationCount={unreadCount}
+        onNotificationPress={() => navigation.navigate('Notifications')}
+      />
+      <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.content}>
+        <View style={styles.welcomeContainer}>
+          <Text style={[styles.greeting, { color: colors.text }]}>{t('welcome', 'Namaste, Pandit Ji')}</Text>
           <Text style={[styles.dateText, { color: colors.textLight }]}>Tuesday, 24 October</Text>
         </View>
+
+        <GlobalSearch />
+
+        {/* Daily Spiritual Card */}
+        <View style={[styles.spiritualCard, { backgroundColor: colors.primary + '15', borderColor: colors.primary }]}>
+          <View style={styles.spiritualHeader}>
+            <Icon name="sun" size={24} color={colors.primaryDark} />
+            <Text style={[styles.spiritualTitle, { color: colors.primaryDark }]}>{t('home.spiritual_card', 'Daily Spiritual Card')}</Text>
+          </View>
+          <View style={styles.spiritualItem}>
+            <Text style={[styles.spiritualLabel, { color: colors.text }]}>Today's Thought:</Text>
+            <Text style={[styles.spiritualValue, { color: colors.textLight }]}>Inner peace begins when you choose not to allow another person or event to control your emotions.</Text>
+          </View>
+          <View style={styles.spiritualItem}>
+            <Text style={[styles.spiritualLabel, { color: colors.text }]}>Today's Mantra:</Text>
+            <Text style={[styles.spiritualValue, { color: colors.textLight }]}>Om Gam Ganapataye Namaha</Text>
+          </View>
+          <View style={styles.spiritualItem}>
+            <Text style={[styles.spiritualLabel, { color: colors.text }]}>Today's Festival:</Text>
+            <Text style={[styles.spiritualValue, { color: colors.textLight }]}>Ganesh Chaturthi</Text>
+          </View>
+          <View style={styles.spiritualItem}>
+            <Text style={[styles.spiritualLabel, { color: colors.text }]}>Inspirational Quote:</Text>
+            <Text style={[styles.spiritualValue, { color: colors.textLight, fontStyle: 'italic' }]}>"The soul is neither born, and nor does it die" - Bhagavad Gita</Text>
+          </View>
+        </View>
+
+        {/* Quick Stats Grid */}
+        <View style={styles.widgetsGrid}>
+          <View style={[styles.widgetBox, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.widgetLabel, { color: colors.textLight }]}>Tithi</Text>
+            <Text style={[styles.widgetValueSmall, { color: colors.text }]}>Shukla Chaturthi</Text>
+          </View>
+          <View style={[styles.widgetBox, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.widgetLabel, { color: colors.textLight }]}>Rahu Kaal</Text>
+            <Text style={[styles.widgetValueSmall, { color: colors.text }]}>15:00 - 16:30</Text>
+          </View>
+          <View style={[styles.widgetBox, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.widgetLabel, { color: colors.textLight }]}>Sunrise</Text>
+            <Text style={[styles.widgetValueSmall, { color: colors.text }]}>06:14 AM</Text>
+          </View>
+          <View style={[styles.widgetBox, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.widgetLabel, { color: colors.textLight }]}>Subscription</Text>
+            <Text style={[styles.widgetValueSmall, { color: colors.primary }]}>Active (30 days)</Text>
+          </View>
+        </View>
+
+        {/* Quick Workflows / Modules */}
+        {renderSectionHeader(t('home.core_workflows', 'Core Workflows'), 'layers')}
+        <View style={styles.workflowGrid}>
+          <TouchableOpacity style={[styles.workflowBtn, { backgroundColor: colors.surface }]} onPress={() => navigation.navigate('Kundali')}>
+            <Icon name="star" size={24} color={colors.secondary} />
+            <Text style={[styles.workflowText, { color: colors.text }]}>Kundali</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.workflowBtn, { backgroundColor: colors.surface }]} onPress={() => navigation.navigate('Muhurt')}>
+            <Icon name="clock" size={24} color={colors.secondary} />
+            <Text style={[styles.workflowText, { color: colors.text }]}>Muhurt</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.workflowBtn, { backgroundColor: colors.surface }]} onPress={() => navigation.navigate('Samagri')}>
+            <Icon name="shopping-bag" size={24} color={colors.secondary} />
+            <Text style={[styles.workflowText, { color: colors.text }]}>Samagri</Text>
+          </TouchableOpacity>
+        </View>
+
         <TouchableOpacity
-          style={[styles.notificationBtn, { backgroundColor: colors.surface, borderColor: colors.border }]}
-          onPress={() => navigation.navigate('Notifications')}
+          style={[styles.actionButton, { backgroundColor: colors.secondary }]}
+          onPress={() => navigation.navigate('Calendar')}
         >
-          <Icon name="bell" size={24} color={colors.text} />
-          {unreadCount > 0 && (
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>{unreadCount}</Text>
+          <Icon name="calendar" size={20} color={colors.surface} />
+          <Text style={[styles.actionButtonText, { color: colors.surface }]}>View Today's Full Panchang</Text>
+        </TouchableOpacity>
+
+        {/* Today's Bookings & Tasks */}
+        <View style={styles.listsContainer}>
+          {renderSectionHeader(t('home.todays_bookings', 'Today\'s Bookings'), 'calendar')}
+          <View style={[styles.listItem, { backgroundColor: colors.surface, borderLeftColor: colors.primary }]}>
+            <View>
+              <Text style={[styles.listItemTitle, { color: colors.text }]}>Ganesh Pooja</Text>
+              <Text style={[styles.listItemSub, { color: colors.textLight }]}>Sharma Family • Andheri West</Text>
             </View>
-          )}
-        </TouchableOpacity>
-      </View>
-
-      <GlobalSearch />
-
-      {/* Daily Spiritual Card */}
-      <View style={[styles.spiritualCard, { backgroundColor: colors.primary + '15', borderColor: colors.primary }]}>
-        <View style={styles.spiritualHeader}>
-          <Icon name="sun" size={24} color={colors.primaryDark} />
-          <Text style={[styles.spiritualTitle, { color: colors.primaryDark }]}>{t('home.spiritual_card', 'Daily Spiritual Card')}</Text>
-        </View>
-        <View style={styles.spiritualItem}>
-          <Text style={[styles.spiritualLabel, { color: colors.text }]}>Today's Thought:</Text>
-          <Text style={[styles.spiritualValue, { color: colors.textLight }]}>Inner peace begins when you choose not to allow another person or event to control your emotions.</Text>
-        </View>
-        <View style={styles.spiritualItem}>
-          <Text style={[styles.spiritualLabel, { color: colors.text }]}>Today's Mantra:</Text>
-          <Text style={[styles.spiritualValue, { color: colors.textLight }]}>Om Gam Ganapataye Namaha</Text>
-        </View>
-        <View style={styles.spiritualItem}>
-          <Text style={[styles.spiritualLabel, { color: colors.text }]}>Today's Festival:</Text>
-          <Text style={[styles.spiritualValue, { color: colors.textLight }]}>Ganesh Chaturthi</Text>
-        </View>
-        <View style={styles.spiritualItem}>
-          <Text style={[styles.spiritualLabel, { color: colors.text }]}>Inspirational Quote:</Text>
-          <Text style={[styles.spiritualValue, { color: colors.textLight, fontStyle: 'italic' }]}>"The soul is neither born, and nor does it die" - Bhagavad Gita</Text>
-        </View>
-      </View>
-
-      {/* Quick Stats Grid */}
-      <View style={styles.widgetsGrid}>
-        <View style={[styles.widgetBox, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.widgetLabel, { color: colors.textLight }]}>Tithi</Text>
-          <Text style={[styles.widgetValueSmall, { color: colors.text }]}>Shukla Chaturthi</Text>
-        </View>
-        <View style={[styles.widgetBox, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.widgetLabel, { color: colors.textLight }]}>Rahu Kaal</Text>
-          <Text style={[styles.widgetValueSmall, { color: colors.text }]}>15:00 - 16:30</Text>
-        </View>
-        <View style={[styles.widgetBox, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.widgetLabel, { color: colors.textLight }]}>Sunrise</Text>
-          <Text style={[styles.widgetValueSmall, { color: colors.text }]}>06:14 AM</Text>
-        </View>
-        <View style={[styles.widgetBox, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.widgetLabel, { color: colors.textLight }]}>Subscription</Text>
-          <Text style={[styles.widgetValueSmall, { color: colors.primary }]}>Active (30 days)</Text>
-        </View>
-      </View>
-
-      {/* Quick Workflows / Modules */}
-      {renderSectionHeader(t('home.core_workflows', 'Core Workflows'), 'layers')}
-      <View style={styles.workflowGrid}>
-        <TouchableOpacity style={[styles.workflowBtn, { backgroundColor: colors.surface }]} onPress={() => navigation.navigate('Kundali')}>
-          <Icon name="star" size={24} color={colors.secondary} />
-          <Text style={[styles.workflowText, { color: colors.text }]}>Kundali</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.workflowBtn, { backgroundColor: colors.surface }]} onPress={() => navigation.navigate('Muhurt')}>
-          <Icon name="clock" size={24} color={colors.secondary} />
-          <Text style={[styles.workflowText, { color: colors.text }]}>Muhurt</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.workflowBtn, { backgroundColor: colors.surface }]} onPress={() => navigation.navigate('Samagri')}>
-          <Icon name="shopping-bag" size={24} color={colors.secondary} />
-          <Text style={[styles.workflowText, { color: colors.text }]}>Samagri</Text>
-        </TouchableOpacity>
-      </View>
-
-      <TouchableOpacity
-        style={[styles.actionButton, { backgroundColor: colors.secondary }]}
-        onPress={() => navigation.navigate('Calendar')}
-      >
-        <Icon name="calendar" size={20} color={colors.surface} />
-        <Text style={[styles.actionButtonText, { color: colors.surface }]}>View Today's Full Panchang</Text>
-      </TouchableOpacity>
-
-      {/* Today's Bookings & Tasks */}
-      <View style={styles.listsContainer}>
-        {renderSectionHeader(t('home.todays_bookings', 'Today\'s Bookings'), 'calendar')}
-        <View style={[styles.listItem, { backgroundColor: colors.surface, borderLeftColor: colors.primary }]}>
-          <View>
-            <Text style={[styles.listItemTitle, { color: colors.text }]}>Ganesh Pooja</Text>
-            <Text style={[styles.listItemSub, { color: colors.textLight }]}>Sharma Family • Andheri West</Text>
+            <Text style={[styles.listItemTime, { color: colors.primary }]}>10:00 AM</Text>
           </View>
-          <Text style={[styles.listItemTime, { color: colors.primary }]}>10:00 AM</Text>
+
+          {renderSectionHeader(t('home.todays_tasks', 'Today\'s Tasks'), 'check-square')}
+          <View style={[styles.listItem, { backgroundColor: colors.surface, borderLeftColor: colors.secondary }]}>
+            <View>
+              <Text style={[styles.listItemTitle, { color: colors.text }]}>Prepare Pooja Samagri</Text>
+              <Text style={[styles.listItemSub, { color: colors.textLight }]}>For evening Satyanarayan Katha</Text>
+            </View>
+            <Icon name="circle" size={24} color={colors.border} />
+          </View>
+
+          {renderSectionHeader(t('home.community_discussions', 'Community Discussions'), 'message-circle')}
+          <TouchableOpacity
+            style={[styles.listItem, { backgroundColor: colors.surface }]}
+            onPress={() => navigation.navigate('Community')}
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.listItemTitle, { color: colors.text }]}>Best Muhurat for Griha Pravesh this month?</Text>
+              <Text style={[styles.listItemSub, { color: colors.textLight }]}>12 Pandits replied • 1 hour ago</Text>
+            </View>
+            <Icon name="chevron-right" size={20} color={colors.textLight} />
+          </TouchableOpacity>
         </View>
 
-        {renderSectionHeader(t('home.todays_tasks', 'Today\'s Tasks'), 'check-square')}
-        <View style={[styles.listItem, { backgroundColor: colors.surface, borderLeftColor: colors.secondary }]}>
-          <View>
-            <Text style={[styles.listItemTitle, { color: colors.text }]}>Prepare Pooja Samagri</Text>
-            <Text style={[styles.listItemSub, { color: colors.textLight }]}>For evening Satyanarayan Katha</Text>
-          </View>
-          <Icon name="circle" size={24} color={colors.border} />
-        </View>
-
-        {renderSectionHeader(t('home.community_discussions', 'Community Discussions'), 'message-circle')}
-        <TouchableOpacity
-          style={[styles.listItem, { backgroundColor: colors.surface }]}
-          onPress={() => navigation.navigate('Community')}
-        >
-          <View style={{ flex: 1 }}>
-            <Text style={[styles.listItemTitle, { color: colors.text }]}>Best Muhurat for Griha Pravesh this month?</Text>
-            <Text style={[styles.listItemSub, { color: colors.textLight }]}>12 Pandits replied • 1 hour ago</Text>
-          </View>
-          <Icon name="chevron-right" size={20} color={colors.textLight} />
-        </TouchableOpacity>
-      </View>
-
-      <View style={{ height: 40 }} />
-    </ScrollView>
+        <View style={{ height: 40 }} />
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+  },
   container: {
     flex: 1,
   },
@@ -173,12 +171,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  welcomeContainer: {
+    marginBottom: 20,
+  },
   greeting: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   dateText: {
-    fontSize: 12,
+    fontSize: 13,
     marginTop: 4,
   },
   notificationBtn: {

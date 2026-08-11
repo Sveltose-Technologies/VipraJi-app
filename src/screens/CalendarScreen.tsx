@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { CalendarEvent, EventStatus } from '../types/calendar';
 import { generateMockCalendarEvents } from '../data/mockCalendar';
 import EventModal from '../components/EventModal';
+import CustomHeader from '../components/CustomHeader';
 
 const STATUS_COLORS: Record<EventStatus, string> = {
   upcoming: '#16A34A',   // Emerald Green
@@ -92,7 +93,8 @@ const CalendarScreen = () => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.mainContainer, { backgroundColor: colors.background }]}>
+      <CustomHeader title={t('tabs.calendar', 'Calendar')} icon="calendar" />
       <ScrollView showsVerticalScrollIndicator={false}>
 
         {/* Calendar Grid */}
@@ -223,7 +225,7 @@ const CalendarScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  mainContainer: { flex: 1 },
   calendar: {
     marginBottom: 10,
     elevation: 2,
