@@ -28,8 +28,8 @@ const asyncStoragePersister = createAsyncStoragePersister({
 const ThemedApp = () => {
   const { colors, isDark } = useTheme();
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top', 'bottom']}>
-      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} backgroundColor={colors.background} />
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.notch }} edges={['top', 'bottom']}>
+      <StatusBar barStyle={isDark ? "light-content" : "light-content"} backgroundColor={colors.notch} />
       <NavigationContainer>
         <AppNavigator />
       </NavigationContainer>
