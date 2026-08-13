@@ -8,15 +8,10 @@ import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 
 import LoginScreen from '../screens/LoginScreen';
-import SignupScreen from '../screens/SignupScreen';
 import VerifyOtpScreen from '../screens/VerifyOtpScreen';
-import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
-import VerifyForgotOtpScreen from '../screens/VerifyForgotOtpScreen';
-import ResetPasswordScreen from '../screens/ResetPasswordScreen';
 import OnboardingScreen from '../screens/OnboardingScreen';
 
 import HomeScreen from '../screens/HomeScreen';
-import SearchScreen from '../screens/SearchScreen';
 import CalendarScreen from '../screens/CalendarScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
@@ -25,6 +20,8 @@ import PoojaLibraryScreen from '../screens/PoojaLibraryScreen';
 import PoojaDetailScreen from '../screens/PoojaDetailScreen';
 import MenuScreen from '../screens/MenuScreen';
 import KundaliScreen from '../screens/KundaliScreen';
+import KundaliMatchingResultScreen from '../screens/KundaliMatchingResultScreen';
+import PanchangScreen from '../screens/PanchangScreen';
 import MuhurtScreen from '../screens/MuhurtScreen';
 import SamagriScreen from '../screens/SamagriScreen';
 import StotramLibraryScreen from '../screens/StotramLibraryScreen';
@@ -46,6 +43,8 @@ export type RootStackParamList = {
   PoojaLibrary: undefined;
   PoojaDetail: { poojaId: string };
   Kundali: undefined;
+  KundaliMatchingResult: undefined;
+  Panchang: undefined;
   Muhurt: undefined;
   Samagri: undefined;
   StotramLibrary: undefined;
@@ -64,11 +63,7 @@ export type RootStackParamList = {
 
 export type AuthStackParamList = {
   Login: undefined;
-  Signup: undefined;
-  VerifyOtp: { email: string; flow?: 'signup' | 'forgot' };
-  ForgotPassword: undefined;
-  VerifyForgotOtp: { email: string };
-  ResetPassword: { email: string };
+  VerifyOtp: { mobile: string };
 };
 
 export type MainTabParamList = {
@@ -86,11 +81,7 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 const AuthNavigator = () => (
   <AuthStack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
     <AuthStack.Screen name="Login" component={LoginScreen} />
-    <AuthStack.Screen name="Signup" component={SignupScreen} />
     <AuthStack.Screen name="VerifyOtp" component={VerifyOtpScreen} />
-    <AuthStack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-    <AuthStack.Screen name="VerifyForgotOtp" component={VerifyForgotOtpScreen} />
-    <AuthStack.Screen name="ResetPassword" component={ResetPasswordScreen} />
   </AuthStack.Navigator>
 );
 
@@ -101,6 +92,7 @@ const MainTabNavigator = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
+        // eslint-disable-next-line react/no-unstable-nested-components
         tabBarIcon: ({ focused, color, size }) => {
           let iconName = '';
           if (route.name === 'Home') iconName = focused ? 'home' : 'home-outline';
@@ -138,6 +130,7 @@ const AppNavigator = () => {
 
   if (isLoading) {
     return (
+      // eslint-disable-next-line react-native/no-inline-styles
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
@@ -152,6 +145,8 @@ const AppNavigator = () => {
           <Stack.Screen name="PoojaLibrary" component={PoojaLibraryScreen} />
           <Stack.Screen name="PoojaDetail" component={PoojaDetailScreen} options={{ presentation: 'card' }} />
           <Stack.Screen name="Kundali" component={KundaliScreen} />
+          <Stack.Screen name="KundaliMatchingResult" component={KundaliMatchingResultScreen} />
+          <Stack.Screen name="Panchang" component={PanchangScreen} />
           <Stack.Screen name="Muhurt" component={MuhurtScreen} />
           <Stack.Screen name="Samagri" component={SamagriScreen} />
           <Stack.Screen name="StotramLibrary" component={StotramLibraryScreen} />

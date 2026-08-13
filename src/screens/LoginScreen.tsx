@@ -1,36 +1,21 @@
 import React, { useState } from 'react';
-import Icon from 'react-native-vector-icons/Feather';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
-import { useLogin } from '../api/auth';
 import Toast from 'react-native-toast-message';
 import { colors } from '../theme/colors';
-import { useAuth } from '../context/AuthContext';
 
 const LoginScreen = ({ navigation }: any) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [mobileNumber, setMobileNumber] = useState('');
 
-  const { mutate: performLogin, isPending } = useLogin();
-  const { login: contextLogin } = useAuth();
-
-  const handleLogin = () => {
-    if (!email || !password) {
-      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Please fill in all fields' });
+  const handleSendOtp = () => {
+    if (!mobileNumber || mobileNumber.length < 10) {
+      Toast.show({ type: 'error', text1: 'Invalid Number', text2: 'Please enter a valid 10-digit mobile number' });
       return;
     }
 
-    performLogin(
-      { email, password },
-      {
-        onSuccess: async () => {
-          await contextLogin();
-          Toast.show({ type: 'success', text1: 'Welcome Back!', text2: 'Logged in successfully' });
-        },
-      }
-    );
+    // Dummy API call success, navigate directly to verify
+    navigation.navigate('VerifyOtp', { mobile: mobileNumber });
   };
 
   return (
@@ -40,47 +25,25 @@ const LoginScreen = ({ navigation }: any) => {
     >
       <View style={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>Log in to VipraJi to continue</Text>
+          <Text style={styles.title}>Welcome to Vipra Sathi</Text>
+          <Text style={styles.subtitle}>Enter your mobile number to get started</Text>
         </View>
 
         <CustomInput
-          label="Email Address"
-          placeholder="Enter your email"
-          keyboardType="email-address"
+          label="Mobile Number"
+          placeholder="Enter 10-digit mobile number"
+          keyboardType="phone-pad"
           autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <CustomInput
-          label="Password"
-          placeholder="Enter your password"
-          secureTextEntry={!showPassword}
-          value={password}
-          onChangeText={setPassword}
-          rightIcon={<Icon name={showPassword ? "eye-off" : "eye"} size={20} color={colors.textLight} />}
-          onRightIconPress={() => setShowPassword(!showPassword)}
+          value={mobileNumber}
+          onChangeText={(text) => setMobileNumber(text.replace(/[^0-9]/g, ''))}
+          maxLength={10}
         />
         
-        <View style={styles.forgotPasswordContainer}>
-          <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
-        </View>
-
         <CustomButton
-          title="Log In"
-          onPress={handleLogin}
-          loading={isPending}
+          title="Get OTP"
+          onPress={handleSendOtp}
           style={styles.button}
         />
-
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-            <Text style={styles.footerLink}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -109,33 +72,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.textLight,
   },
-  forgotPasswordContainer: {
-    alignItems: 'flex-end',
-    marginBottom: 24,
-    marginTop: -8,
-  },
-  forgotPasswordText: {
-    color: colors.primary,
-    fontSize: 14,
-    fontWeight: '600',
-  },
   button: {
-    marginTop: 8,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 32,
-  },
-  footerText: {
-    color: colors.textLight,
-    fontSize: 14,
-  },
-  footerLink: {
-    color: colors.primary,
-    fontSize: 14,
-    fontWeight: 'bold',
+    marginTop: 24,
   },
 });
 
 export default LoginScreen;
+

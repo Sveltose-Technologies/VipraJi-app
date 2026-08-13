@@ -9,7 +9,7 @@ const { width, height } = Dimensions.get('window');
 const SLIDES = [
   {
     id: '1',
-    title: 'Welcome to VipraJi',
+    title: 'Welcome to Vipra Sathi',
     description: 'Your digital companion for daily spiritual practices, poojas, and panchang.',
     image: require('../assets/images/onboarding_1.png')
   },

@@ -6,7 +6,8 @@ interface AuthContextType {
   isGuest: boolean;
   isLoading: boolean;
   hasSeenOnboarding: boolean;
-  login: () => Promise<void>;
+  user: { uid: string; mobileNumber: string } | null;
+  login: (uid: string, mobileNumber: string) => Promise<void>;
   logout: () => Promise<void>;
   continueAsGuest: () => Promise<void>;
   completeOnboardingFlow: () => Promise<void>;
@@ -18,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({
   isGuest: false,
   isLoading: true,
   hasSeenOnboarding: false,
+  user: null,
   login: async () => {},
   logout: async () => {},
   continueAsGuest: async () => {},
@@ -32,6 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isGuest, setIsGuest] = useState(false);
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<{ uid: string; mobileNumber: string } | null>(null);
 
   useEffect(() => {
     checkInitialState();
@@ -44,8 +47,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsGuest(true);
       }
 
-      const loginTimestamp = await AsyncStorage.getItem('login_timestamp');
-      if (loginTimestamp) {
+      const uid = await AsyncStorage.getItem('user_uid');
+      const mobileNumber = await AsyncStorage.getItem('user_mobile');
+      
+      if (uid && mobileNumber) {
+        setUser({ uid, mobileNumber });
         setIsAuthenticated(true);
       }
     } catch (e) {
@@ -55,10 +61,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const login = async () => {
+  const login = async (uid: string, mobileNumber: string) => {
     try {
-      await AsyncStorage.setItem('login_timestamp', Date.now().toString());
+      await AsyncStorage.setItem('user_uid', uid);
+      await AsyncStorage.setItem('user_mobile', mobileNumber);
       await AsyncStorage.removeItem('is_guest');
+      setUser({ uid, mobileNumber });
       setIsAuthenticated(true);
       setIsGuest(false);
     } catch (e) {
@@ -68,9 +76,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
-      await AsyncStorage.removeItem('login_timestamp');
+      await AsyncStorage.removeItem('user_uid');
+      await AsyncStorage.removeItem('user_mobile');
       await AsyncStorage.removeItem('is_guest');
       await AsyncStorage.removeItem('has_seen_onboarding');
+      setUser(null);
       setIsAuthenticated(false);
       setIsGuest(false);
       setHasSeenOnboarding(false);
@@ -108,8 +118,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isGuest, isLoading, hasSeenOnboarding, login, logout, continueAsGuest, completeOnboardingFlow, exitGuestToLogin }}>
+    <AuthContext.Provider value={{ isAuthenticated, isGuest, isLoading, hasSeenOnboarding, user, login, logout, continueAsGuest, completeOnboardingFlow, exitGuestToLogin }}>
       {children}
     </AuthContext.Provider>
   );
 };
+

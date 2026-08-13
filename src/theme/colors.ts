@@ -1,30 +1,30 @@
 export const lightColors = {
-  primary: '#16A34A', // Emerald Green
-  primaryDark: '#15803D',
-  darkHeader: '#013220',
-  secondary: '#2563EB', // Royal Blue
-  background: '#F3F4F6',
+  primary: '#F97316', // Vibrant Orange
+  primaryDark: '#EA580C',
+  darkHeader: '#9A3412', // Deep Orange for header
+  secondary: '#3B82F6', // Royal Blue for contrast accents
+  background: '#F8FAFC', // Sleek slate-50
   surface: '#FFFFFF', // White
-  text: '#1F2937', // Charcoal
-  textLight: '#6B7280',
+  text: '#0F172A', // Slate-900 for modern high contrast
+  textLight: '#64748B', // Slate-500
   error: '#EF4444',
-  border: '#D1D5DB',
-  inputBg: '#F9FAFB',
+  border: '#E2E8F0', // Slate-200
+  inputBg: '#F1F5F9', // Slate-100
   notch: '#000000'
 };
 
 export const darkColors = {
-  primary: '#22C55E',
-  primaryDark: '#16A34A',
-  darkHeader: '#022C22', // Very dark emerald green for dark mode header
-  secondary: '#3B82F6',
-  background: '#111827', // Dark background
-  surface: '#1F2937', // Darker surface
-  text: '#F9FAFB', // Light text
-  textLight: '#9CA3AF',
+  primary: '#FB923C', // Bright Orange for dark mode
+  primaryDark: '#F97316',
+  darkHeader: '#431407', // Very dark orange/brown
+  secondary: '#60A5FA', // Light blue
+  background: '#0F172A', // Slate-900 background
+  surface: '#1E293B', // Slate-800 surface
+  text: '#F8FAFC', // Slate-50 text
+  textLight: '#94A3B8', // Slate-400
   error: '#F87171',
-  border: '#374151',
-  inputBg: '#374151',
+  border: '#334155', // Slate-700
+  inputBg: '#334155', // Slate-700
   notch: '#000000'
 };
 

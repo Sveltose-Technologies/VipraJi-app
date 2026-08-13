@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform, StatusBar, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useTheme } from '../theme/ThemeContext';
+import { useNavigation } from '@react-navigation/native';
 
 interface CustomHeaderProps {
   title?: string;
@@ -9,6 +10,7 @@ interface CustomHeaderProps {
   isHome?: boolean;
   notificationCount?: number;
   onNotificationPress?: () => void;
+  showBack?: boolean;
 }
 
 const CustomHeader: React.FC<CustomHeaderProps> = ({
@@ -17,8 +19,10 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
   isHome,
   notificationCount = 0,
   onNotificationPress,
+  showBack = false,
 }) => {
   const { colors, isDark } = useTheme();
+  const navigation = useNavigation();
   
   // Use a bright vibrant color for icons in dark mode for better visibility
   const iconColor = isDark ? colors.primary : '#FFF';
@@ -35,11 +39,16 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
               style={styles.logoImage}
               resizeMode="contain"
             />
-            <Text style={[styles.logoText, { color: textColor }]}>VipraJi</Text>
+            <Text style={[styles.logoText, { color: textColor }]}>Vipra Sathi</Text>
           </View>
         ) : (
           <View style={styles.titleContainer}>
-            {icon && <Icon name={icon} size={22} color={iconColor} style={styles.icon} />}
+            {showBack && (
+              <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                <Icon name="arrow-left" size={24} color={textColor} />
+              </TouchableOpacity>
+            )}
+            {icon && !showBack && <Icon name={icon} size={22} color={iconColor} style={styles.icon} />}
             <Text style={[styles.titleText, { color: textColor }]}>{title}</Text>
           </View>
         )}
@@ -95,6 +104,10 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  backButton: {
+    marginRight: 12,
+    padding: 4,
   },
   icon: {
     marginRight: 10,

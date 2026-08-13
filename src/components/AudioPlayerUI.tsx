@@ -147,25 +147,14 @@ const AudioPlayerUI: React.FC<AudioPlayerUIProps> = ({ title, audioUrl }) => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? colors.surface : '#FFF', borderTopColor: colors.border }]}>
+    <View style={[styles.container, { backgroundColor: isDark ? colors.surface : '#FFF' }]}>
       
-      {/* Progress Bar */}
-      <View style={styles.progressBarContainer}>
-        <Animated.View 
-          style={[
-            styles.progressBarFill, 
-            { 
-              backgroundColor: colors.primary,
-              width: progressAnim.interpolate({
-                inputRange: [0, 100],
-                outputRange: ['0%', '100%']
-              })
-            }
-          ]} 
-        />
-      </View>
-
       <View style={styles.mainContent}>
+        {/* Album Art Icon */}
+        <View style={[styles.albumArt, { backgroundColor: colors.primary + '20' }]}>
+          <Icon name="music" size={24} color={colors.primary} />
+        </View>
+
         <View style={styles.infoContainer}>
           <Text style={[styles.nowPlaying, { color: colors.textLight }]}>
             {isLoading ? 'Loading...' : isPlaying ? 'Playing' : 'Paused'} • {formatTime(elapsed)} / {formatTime(duration)}
@@ -194,11 +183,17 @@ const AudioPlayerUI: React.FC<AudioPlayerUIProps> = ({ title, audioUrl }) => {
 
           {/* Play/Pause Button */}
           <TouchableOpacity 
-            style={[styles.playButton, { backgroundColor: isLoading ? colors.border : colors.primary }]}
+            style={[
+              styles.playButton, 
+              { 
+                backgroundColor: isLoading ? colors.border : colors.primary,
+                shadowColor: colors.primary 
+              }
+            ]}
             onPress={togglePlay}
             disabled={isLoading}
           >
-            <Icon name={isPlaying ? "pause" : "play"} size={28} color="#FFF" style={!isPlaying && !isLoading ? { marginLeft: 4 } : {}} />
+            <Icon name={isPlaying ? "pause" : "play"} size={24} color="#FFF" style={!isPlaying && !isLoading ? { marginLeft: 3 } : {}} />
           </TouchableOpacity>
 
           {/* Repeat Button */}
@@ -207,9 +202,25 @@ const AudioPlayerUI: React.FC<AudioPlayerUIProps> = ({ title, audioUrl }) => {
             onPress={() => setIsRepeat(!isRepeat)}
             disabled={isLoading}
           >
-            <Icon name="repeat" size={24} color={isRepeat ? colors.primary : colors.textLight} style={{ opacity: isLoading ? 0.5 : 1 }} />
+            <Icon name="repeat" size={20} color={isRepeat ? colors.primary : colors.textLight} style={{ opacity: isLoading ? 0.5 : 1 }} />
           </TouchableOpacity>
         </View>
+      </View>
+
+      {/* Progress Bar at the bottom of the card */}
+      <View style={styles.progressBarContainer}>
+        <Animated.View 
+          style={[
+            styles.progressBarFill, 
+            { 
+              backgroundColor: colors.primary,
+              width: progressAnim.interpolate({
+                inputRange: [0, 100],
+                outputRange: ['0%', '100%']
+              })
+            }
+          ]} 
+        />
       </View>
     </View>
   );
@@ -217,40 +228,57 @@ const AudioPlayerUI: React.FC<AudioPlayerUIProps> = ({ title, audioUrl }) => {
 
 const styles = StyleSheet.create({
   container: {
-    borderTopWidth: 1,
-    elevation: 8,
+    marginHorizontal: 16,
+    marginBottom: 24,
+    borderRadius: 24,
+    elevation: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: -3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    overflow: 'hidden',
+    position: 'relative',
   },
   progressBarContainer: {
     height: 4,
     backgroundColor: 'rgba(0,0,0,0.05)',
     width: '100%',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
   progressBarFill: {
     height: '100%',
   },
   mainContent: {
     padding: 16,
-    paddingBottom: 24, // Extra padding for safe area
+    paddingBottom: 20, // Leave space for progress bar
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  albumArt: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
   infoContainer: {
     flex: 1,
-    marginRight: 16,
+    marginRight: 8,
   },
   nowPlaying: {
-    fontSize: 12,
+    fontSize: 11,
     marginBottom: 4,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+    fontWeight: '600',
   },
   title: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
   },
   controlsContainer: {
@@ -258,26 +286,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   controlButton: {
-    padding: 12,
+    padding: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    width: 48,
+    width: 40,
   },
   slowModeText: {
-    fontSize: 14,
+    fontSize: 12,
   },
   playButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 8,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+    marginHorizontal: 4,
+    elevation: 6,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
   }
 });
 

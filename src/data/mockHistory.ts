@@ -38,7 +38,7 @@ export const MOCK_HISTORY: HistoryItem[] = [
   {
     id: 'h5',
     type: 'invoice',
-    title: 'VipraJi Premium Subscription',
+    title: 'Vipra Sathi Premium Subscription',
     description: 'Annual renewal successful.',
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(), // 5 days ago
     metadata: {

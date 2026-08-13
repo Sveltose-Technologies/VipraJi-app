@@ -4,7 +4,7 @@ const path = require('path');
 
 const SOURCE_IMAGE = 'logo.png';
 const ANDROID_RES_PATH = path.join(__dirname, 'android', 'app', 'src', 'main', 'res');
-const IOS_ICON_PATH = path.join(__dirname, 'ios', 'VipraJi', 'Images.xcassets', 'AppIcon.appiconset');
+const IOS_ICON_PATH = path.join(__dirname, 'ios', 'VipraSathi', 'Images.xcassets', 'AppIcon.appiconset');
 
 const ANDROID_SIZES = {
   'mipmap-mdpi': 48,

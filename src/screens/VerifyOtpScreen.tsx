@@ -2,46 +2,37 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
-import { useVerifyOtp, useResendOtp } from '../api/auth';
 import Toast from 'react-native-toast-message';
 import { colors } from '../theme/colors';
+import { useAuth } from '../context/AuthContext';
 
 const VerifyOtpScreen = ({ route, navigation }: any) => {
-  const email = route.params?.email || '';
-  const flow = route.params?.flow || 'signup';
+  const mobile = route.params?.mobile || '';
   const [otp, setOtp] = useState('');
+  const [verifying, setVerifying] = useState(false);
+  const { login } = useAuth();
 
-  const { mutate: verifyOtp, isPending: verifying } = useVerifyOtp();
-  const { mutate: resendOtp, isPending: resending } = useResendOtp();
-
-  const handleVerify = () => {
-    if (!otp) {
+  const handleVerify = async () => {
+    if (!otp || otp.length < 4) {
       Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Please enter the OTP' });
       return;
     }
 
-    verifyOtp(
-      { email, otp },
-      {
-        onSuccess: () => {
-          Toast.show({ type: 'success', text1: 'Verified', text2: 'OTP verified successfully' });
-          if (flow === 'signup') {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Login' }],
-            });
-          }
-        },
-      }
-    );
+    setVerifying(true);
+    
+    // Simulate network request
+    setTimeout(async () => {
+      setVerifying(false);
+      Toast.show({ type: 'success', text1: 'Verified', text2: 'OTP verified successfully' });
+      
+      // Dummy UID for mockup
+      const mockUid = `usr_${Math.random().toString(36).substr(2, 9)}`;
+      await login(mockUid, mobile);
+    }, 1000);
   };
 
   const handleResend = () => {
-    resendOtp({ email }, {
-      onSuccess: () => {
-        Toast.show({ type: 'success', text1: 'OTP Resent', text2: 'A new OTP has been sent to your email.' });
-      }
-    });
+    Toast.show({ type: 'success', text1: 'OTP Resent', text2: `A new OTP has been sent to ${mobile}.` });
   }
 
   return (
@@ -52,12 +43,12 @@ const VerifyOtpScreen = ({ route, navigation }: any) => {
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.title}>Verify OTP</Text>
-          <Text style={styles.subtitle}>Enter the code sent to {email}</Text>
+          <Text style={styles.subtitle}>Enter the code sent to +91 {mobile}</Text>
         </View>
 
         <CustomInput
           label="One Time Password (OTP)"
-          placeholder="Enter OTP"
+          placeholder="Enter OTP (e.g., 1234)"
           keyboardType="number-pad"
           value={otp}
           onChangeText={setOtp}
@@ -65,7 +56,7 @@ const VerifyOtpScreen = ({ route, navigation }: any) => {
         />
 
         <CustomButton
-          title="Verify"
+          title="Verify & Login"
           onPress={handleVerify}
           loading={verifying}
           style={styles.button}
@@ -73,8 +64,8 @@ const VerifyOtpScreen = ({ route, navigation }: any) => {
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>Didn't receive code? </Text>
-          <TouchableOpacity onPress={handleResend} disabled={resending}>
-            <Text style={[styles.footerLink, resending && { color: colors.textLight }]}>Resend</Text>
+          <TouchableOpacity onPress={handleResend}>
+            <Text style={styles.footerLink}>Resend</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -127,3 +118,4 @@ const styles = StyleSheet.create({
 });
 
 export default VerifyOtpScreen;
+

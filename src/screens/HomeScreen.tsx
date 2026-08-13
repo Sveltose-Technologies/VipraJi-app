@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import GlobalSearch from '../components/GlobalSearch';
@@ -11,6 +11,9 @@ import { RootStackParamList, MainTabParamList } from '../navigation/AppNavigator
 import CustomHeader from '../components/CustomHeader';
 
 import { MOCK_NOTIFICATIONS } from '../data/mockNotifications';
+import AajKaKaamCard from '../components/AajKaKaamCard';
+import PanchangWidget from '../components/PanchangWidget';
+import { MOCK_AAJ_KA_KAAM, MOCK_MORNING_PANCHANG } from '../data/mockDashboard';
 
 type NavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, 'Home'>,
@@ -31,6 +34,14 @@ const HomeScreen = () => {
     </View>
   );
 
+  const handleAction = (action: string) => {
+    if (action === 'samagri') {
+      navigation.navigate('Samagri');
+    } else {
+      Alert.alert('Action triggered', `You pressed the ${action} button.`);
+    }
+  };
+
   return (
     <View style={styles.mainContainer}>
       <CustomHeader
@@ -46,7 +57,39 @@ const HomeScreen = () => {
 
         <GlobalSearch />
 
-        {/* Daily Spiritual Card */}
+        {/* Quick Access Tools */}
+        <View style={styles.quickAccessRow}>
+          <TouchableOpacity 
+            style={[styles.quickAccessCard, { backgroundColor: '#F97316' }]}
+            onPress={() => navigation.navigate('Panchang')}
+            activeOpacity={0.8}
+          >
+            <View style={styles.quickAccessIconBgWhite}>
+              <Icon name="sun" size={20} color="#F97316" />
+            </View>
+            <View style={styles.quickAccessTextContainer}>
+              <Text style={styles.quickAccessTitleWhite}>Panchang</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={[styles.quickAccessCard, { backgroundColor: '#8B5CF6' }]}
+            onPress={() => navigation.navigate('Kundali')}
+            activeOpacity={0.8}
+          >
+            <View style={styles.quickAccessIconBgWhite}>
+              <Icon name="star" size={20} color="#8B5CF6" />
+            </View>
+            <View style={styles.quickAccessTextContainer}>
+              <Text style={styles.quickAccessTitleWhite}>Kundali</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        {/* 1. Aaj Ka Kaam Card - One Tap Daily Workspace */}
+        <AajKaKaamCard data={MOCK_AAJ_KA_KAAM} onPressAction={handleAction} />
+
+        {/* 2. Daily Spiritual Card */}
         <View style={[styles.spiritualCard, { backgroundColor: colors.primary + '15', borderColor: colors.primary }]}>
           <View style={styles.spiritualHeader}>
             <Icon name="sun" size={24} color={colors.primaryDark} />
@@ -70,52 +113,19 @@ const HomeScreen = () => {
           </View>
         </View>
 
-        {/* Quick Stats Grid */}
-        <View style={styles.widgetsGrid}>
-          <View style={[styles.widgetBox, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.widgetLabel, { color: colors.textLight }]}>Tithi</Text>
-            <Text style={[styles.widgetValueSmall, { color: colors.text }]}>Shukla Chaturthi</Text>
-          </View>
-          <View style={[styles.widgetBox, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.widgetLabel, { color: colors.textLight }]}>Rahu Kaal</Text>
-            <Text style={[styles.widgetValueSmall, { color: colors.text }]}>15:00 - 16:30</Text>
-          </View>
-          <View style={[styles.widgetBox, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.widgetLabel, { color: colors.textLight }]}>Sunrise</Text>
-            <Text style={[styles.widgetValueSmall, { color: colors.text }]}>06:14 AM</Text>
-          </View>
-          <View style={[styles.widgetBox, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.widgetLabel, { color: colors.textLight }]}>Subscription</Text>
-            <Text style={[styles.widgetValueSmall, { color: colors.primary }]}>Active (30 days)</Text>
-          </View>
-        </View>
+        {/* 3. Morning Daily Dashboard Widgets */}
+        <PanchangWidget data={MOCK_MORNING_PANCHANG} />
 
-        {/* Quick Workflows / Modules */}
-        {renderSectionHeader(t('home.core_workflows', 'Core Workflows'), 'layers')}
-        <View style={styles.workflowGrid}>
-          <TouchableOpacity style={[styles.workflowBtn, { backgroundColor: colors.surface }]} onPress={() => navigation.navigate('Kundali')}>
-            <Icon name="star" size={24} color={colors.secondary} />
-            <Text style={[styles.workflowText, { color: colors.text }]}>Kundali</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.workflowBtn, { backgroundColor: colors.surface }]} onPress={() => navigation.navigate('Muhurt')}>
-            <Icon name="clock" size={24} color={colors.secondary} />
-            <Text style={[styles.workflowText, { color: colors.text }]}>Muhurt</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.workflowBtn, { backgroundColor: colors.surface }]} onPress={() => navigation.navigate('Samagri')}>
-            <Icon name="shopping-bag" size={24} color={colors.secondary} />
-            <Text style={[styles.workflowText, { color: colors.text }]}>Samagri</Text>
-          </TouchableOpacity>
-        </View>
-
+        {/* Quick Link to Calendar */}
         <TouchableOpacity
           style={[styles.actionButton, { backgroundColor: colors.secondary }]}
           onPress={() => navigation.navigate('Calendar')}
         >
           <Icon name="calendar" size={20} color={colors.surface} />
-          <Text style={[styles.actionButtonText, { color: colors.surface }]}>View Today's Full Panchang</Text>
+          <Text style={[styles.actionButtonText, { color: colors.surface }]}>View Full Calendar</Text>
         </TouchableOpacity>
 
-        {/* Today's Bookings & Tasks */}
+        {/* 4. Today's Bookings & Tasks */}
         <View style={styles.listsContainer}>
           {renderSectionHeader(t('home.todays_bookings', 'Today\'s Bookings'), 'calendar')}
           <View style={[styles.listItem, { backgroundColor: colors.surface, borderLeftColor: colors.primary }]}>
@@ -133,6 +143,16 @@ const HomeScreen = () => {
               <Text style={[styles.listItemSub, { color: colors.textLight }]}>For evening Satyanarayan Katha</Text>
             </View>
             <Icon name="circle" size={24} color={colors.border} />
+          </View>
+
+          {/* Subscription Status at the bottom */}
+          {renderSectionHeader('Subscription Status', 'award')}
+          <View style={[styles.listItem, { backgroundColor: colors.surface, borderLeftColor: colors.primary }]}>
+            <View>
+              <Text style={[styles.listItemTitle, { color: colors.text }]}>Premium Plan Active</Text>
+              <Text style={[styles.listItemSub, { color: colors.textLight }]}>30 days remaining</Text>
+            </View>
+            <Icon name="check-circle" size={24} color={colors.primary} />
           </View>
 
           {renderSectionHeader(t('home.community_discussions', 'Community Discussions'), 'message-circle')}
@@ -164,22 +184,6 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
   },
-  header: {
-    marginBottom: 16,
-    marginTop: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  logoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  logoText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginLeft: 8,
-  },
   welcomeContainer: {
     marginBottom: 20,
   },
@@ -191,31 +195,41 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginTop: 4,
   },
-  notificationBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    borderWidth: 1,
+  quickAccessRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+  },
+  quickAccessCard: {
+    flex: 1,
+    flexDirection: 'row',
+    padding: 12,
+    borderRadius: 12,
+    marginHorizontal: 6,
+    alignItems: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  quickAccessIconBgWhite: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 12,
   },
-  badge: {
-    position: 'absolute',
-    top: -2,
-    right: -2,
-    backgroundColor: '#DC2626',
-    width: 18,
-    height: 18,
-    borderRadius: 9,
+  quickAccessTextContainer: {
+    flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#FFF',
   },
-  badgeText: {
-    color: '#FFF',
-    fontSize: 10,
+  quickAccessTitleWhite: {
+    fontSize: 16,
     fontWeight: 'bold',
+    color: '#FFF',
   },
   spiritualCard: {
     padding: 16,
@@ -244,31 +258,6 @@ const styles = StyleSheet.create({
   spiritualValue: {
     fontSize: 14,
     lineHeight: 22,
-  },
-  widgetsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  widgetBox: {
-    width: '48%',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  widgetLabel: {
-    fontSize: 13,
-    marginBottom: 6,
-  },
-  widgetValueSmall: {
-    fontSize: 15,
-    fontWeight: 'bold',
   },
   actionButton: {
     flexDirection: 'row',
@@ -319,28 +308,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   listItemTime: {
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  workflowGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  workflowBtn: {
-    width: '31%',
-    padding: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  workflowText: {
-    marginTop: 8,
     fontSize: 14,
     fontWeight: 'bold',
   }

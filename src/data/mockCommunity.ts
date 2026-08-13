@@ -59,7 +59,7 @@ export const MOCK_POSTS: Post[] = [
         id: 'c2',
         author: {
           id: 'admin',
-          name: 'VipraJi Team',
+          name: 'Vipra Sathi Team',
           verified: true
         },
         content: 'Thank you for the suggestion! We have added this to our roadmap for the next update.',

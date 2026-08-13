@@ -216,7 +216,7 @@ const SettingsScreen = () => {
       {isGuest ? (
         <View style={[styles.guestCTAContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           {/* <Text style={[styles.guestCTASubtitle, { color: colors.textLight }]}>
-            Join VipraJi to unlock personalized daily panchang, history, and community features.
+            Join Vipra Sathi to unlock personalized daily panchang, history, and community features.
           </Text> */}
           <TouchableOpacity
             style={[styles.loginCTAButton, { backgroundColor: colors.primary }]}
@@ -239,7 +239,7 @@ const SettingsScreen = () => {
       )}
 
       <View style={styles.footer}>
-        <Text style={[styles.versionText, { color: colors.textLight }]}>VipraJi App v1.0.0</Text>
+        <Text style={[styles.versionText, { color: colors.textLight }]}>Vipra Sathi App v1.0.0</Text>
       </View>
     </ScrollView>
   );
