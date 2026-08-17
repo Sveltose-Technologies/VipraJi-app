@@ -94,7 +94,7 @@ const CalendarScreen = () => {
 
   return (
     <View style={[styles.mainContainer, { backgroundColor: colors.background }]}>
-      <CustomHeader title={t('tabs.calendar', 'Calendar')} icon="calendar" />
+      <CustomHeader title={t('tabs.calendar', 'Calendar')} icon="calendar" showThemeToggle={true} />
       <ScrollView showsVerticalScrollIndicator={false}>
 
         {/* Calendar Grid */}

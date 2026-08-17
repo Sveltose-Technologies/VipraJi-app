@@ -1,12 +1,12 @@
 import React from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppNavigator from './src/navigation/AppNavigator';
 import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
 import { AuthProvider } from './src/context/AuthContext';
@@ -28,12 +28,12 @@ const asyncStoragePersister = createAsyncStoragePersister({
 const ThemedApp = () => {
   const { colors, isDark } = useTheme();
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.notch }} edges={['top', 'bottom']}>
+    <View style={{ flex: 1, backgroundColor: colors.notch }}>
       <StatusBar barStyle={isDark ? "light-content" : "light-content"} backgroundColor={colors.notch} />
       <NavigationContainer>
         <AppNavigator />
       </NavigationContainer>
-    </SafeAreaView>
+    </View>
   );
 };
 

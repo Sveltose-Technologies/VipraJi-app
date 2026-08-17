@@ -4,8 +4,12 @@ import { useTheme } from '../theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Feather';
 import Sound from 'react-native-sound';
 
-// Enable playback in silence mode
-Sound.setCategory('Playback');
+// Enable playback in silence mode safely
+try {
+  Sound.setCategory('Playback');
+} catch (e) {
+  console.log('Error setting audio category on startup', e);
+}
 
 interface AudioPlayerUIProps {
   title: string;

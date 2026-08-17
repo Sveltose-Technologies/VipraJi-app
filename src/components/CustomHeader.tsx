@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Platform, StatusBar, Image } 
 import Icon from 'react-native-vector-icons/Feather';
 import { useTheme } from '../theme/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface CustomHeaderProps {
   title?: string;
@@ -11,6 +12,7 @@ interface CustomHeaderProps {
   notificationCount?: number;
   onNotificationPress?: () => void;
   showBack?: boolean;
+  showThemeToggle?: boolean;
 }
 
 const CustomHeader: React.FC<CustomHeaderProps> = ({
@@ -20,17 +22,24 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
   notificationCount = 0,
   onNotificationPress,
   showBack = false,
+  showThemeToggle = false,
 }) => {
-  const { colors, isDark } = useTheme();
+  const { colors, isDark, setTheme } = useTheme();
   const navigation = useNavigation();
   
   // Use a bright vibrant color for icons in dark mode for better visibility
   const iconColor = isDark ? colors.primary : '#FFF';
   const textColor = '#FFF'; // Keep text white for high contrast on dark headers
 
+  const insets = useSafeAreaInsets();
+
+  const toggleTheme = () => {
+    setTheme(isDark ? 'light' : 'dark');
+  };
+
   return (
-    <View style={{ backgroundColor: colors.darkHeader }}>
-      <StatusBar backgroundColor={colors.darkHeader} barStyle="light-content" />
+    <View style={{ backgroundColor: colors.darkHeader, paddingTop: insets.top }}>
+      <StatusBar backgroundColor={colors.darkHeader} barStyle="light-content" translucent={true} />
       <View style={[styles.container, { backgroundColor: colors.darkHeader }]}>
         {isHome ? (
           <View style={styles.logoContainer}>
@@ -53,16 +62,24 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
           </View>
         )}
 
-        {isHome && (
-          <TouchableOpacity style={styles.notificationBtn} onPress={onNotificationPress}>
-            <Icon name="bell" size={20} color={iconColor} />
-            {notificationCount > 0 && (
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>{notificationCount}</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        )}
+        <View style={styles.rightActions}>
+          {showThemeToggle && (
+            <TouchableOpacity style={styles.iconBtn} onPress={toggleTheme}>
+              <Icon name={isDark ? "sun" : "moon"} size={20} color={iconColor} />
+            </TouchableOpacity>
+          )}
+          
+          {isHome && (
+            <TouchableOpacity style={styles.iconBtn} onPress={onNotificationPress}>
+              <Icon name="bell" size={20} color={iconColor} />
+              {notificationCount > 0 && (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>{notificationCount}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
     </View>
   );
@@ -104,6 +121,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
   },
   backButton: {
     marginRight: 12,
@@ -116,14 +134,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#FFF',
+    flexShrink: 1,
   },
-  notificationBtn: {
+  rightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconBtn: {
     width: 36,
     height: 36,
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    marginLeft: 8,
   },
   badge: {
     position: 'absolute',

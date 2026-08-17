@@ -11,11 +11,13 @@ import {
   UIManager,
   Dimensions
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Feather';
 import { useAuth } from '../context/AuthContext';
+import CustomHeader from '../components/CustomHeader';
 
 if (
   Platform.OS === 'android' &&
@@ -129,8 +131,9 @@ const SettingsScreen = () => {
   const { theme, setTheme, colors } = useTheme();
   const { t, i18n } = useTranslation();
   const { logout, isGuest, exitGuestToLogin } = useAuth();
+  const insets = useSafeAreaInsets();
 
-  const [expandedSection, setExpandedSection] = useState<string | null>('appearance');
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   const toggleSection = (section: string) => {
     LayoutAnimation.configureNext({
@@ -148,11 +151,16 @@ const SettingsScreen = () => {
   };
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: colors.background }]}
-      contentContainerStyle={styles.scrollContent}
-      showsVerticalScrollIndicator={false}
-    >
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <CustomHeader title={t('menu.settings', 'Settings')} icon="settings" showBack={true} />
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: Math.max(insets.bottom + 16, 40) }
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
       <View style={styles.header}>
         <Text style={[styles.headerTitle, { color: colors.text }]}>{t('menu.settings', 'Settings')}</Text>
         <Text style={[styles.headerSubtitle, { color: colors.textLight }]}>
@@ -241,7 +249,8 @@ const SettingsScreen = () => {
       <View style={styles.footer}>
         <Text style={[styles.versionText, { color: colors.textLight }]}>Vipra Sathi App v1.0.0</Text>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 

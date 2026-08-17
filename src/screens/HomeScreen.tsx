@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Linking } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import GlobalSearch from '../components/GlobalSearch';
@@ -34,11 +34,20 @@ const HomeScreen = () => {
     </View>
   );
 
-  const handleAction = (action: string) => {
-    if (action === 'samagri') {
-      navigation.navigate('Samagri');
-    } else {
-      Alert.alert('Action triggered', `You pressed the ${action} button.`);
+  const handleAction = async (action: string) => {
+    try {
+      if (action === 'call') {
+        await Linking.openURL(`tel:${MOCK_AAJ_KA_KAAM.phone}`);
+      } else if (action === 'whatsapp') {
+        const phone = MOCK_AAJ_KA_KAAM.phone.replace('+', '');
+        const url = `https://wa.me/${phone}?text=Namaste`;
+        await Linking.openURL(url);
+      } else if (action === 'directions') {
+        const address = encodeURIComponent(MOCK_AAJ_KA_KAAM.address);
+        await Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${address}`);
+      }
+    } catch (e) {
+      Alert.alert('Error', 'Could not open the requested application.');
     }
   };
 
@@ -48,6 +57,7 @@ const HomeScreen = () => {
         isHome={true}
         notificationCount={unreadCount}
         onNotificationPress={() => navigation.navigate('Notifications')}
+        showThemeToggle={true}
       />
       <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.content}>
         <View style={styles.welcomeContainer}>
@@ -59,7 +69,7 @@ const HomeScreen = () => {
 
         {/* Quick Access Tools */}
         <View style={styles.quickAccessRow}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.quickAccessCard, { backgroundColor: '#F97316' }]}
             onPress={() => navigation.navigate('Panchang')}
             activeOpacity={0.8}
@@ -72,8 +82,8 @@ const HomeScreen = () => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={[styles.quickAccessCard, { backgroundColor: '#8B5CF6' }]}
+          <TouchableOpacity
+            style={[styles.quickAccessCard, { backgroundColor: colors.primary }]}
             onPress={() => navigation.navigate('Kundali')}
             activeOpacity={0.8}
           >
@@ -182,7 +192,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 16,
+    padding: 10,
   },
   welcomeContainer: {
     marginBottom: 20,
@@ -205,7 +215,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 12,
     borderRadius: 12,
-    marginHorizontal: 6,
+    marginHorizontal: 5,
     alignItems: 'center',
     elevation: 4,
     shadowColor: '#000',

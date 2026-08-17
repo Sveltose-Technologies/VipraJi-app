@@ -51,11 +51,6 @@ const AajKaKaamCard: React.FC<Props> = ({ data, onPressAction }) => {
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.actionsScroll}>
-        <TouchableOpacity style={[styles.actionBtn, { backgroundColor: colors.primary }]} onPress={() => onPressAction('start')}>
-          <Icon name="play" size={16} color="#FFF" />
-          <Text style={[styles.actionText, { color: '#FFF' }]}>Start Pooja</Text>
-        </TouchableOpacity>
-        
         <TouchableOpacity style={[styles.actionBtn, { backgroundColor: colors.background, borderColor: colors.border, borderWidth: 1 }]} onPress={() => onPressAction('call')}>
           <Icon name="phone" size={16} color={colors.text} />
           <Text style={[styles.actionText, { color: colors.text }]}>Call</Text>
@@ -69,11 +64,6 @@ const AajKaKaamCard: React.FC<Props> = ({ data, onPressAction }) => {
         <TouchableOpacity style={[styles.actionBtn, { backgroundColor: colors.background, borderColor: colors.border, borderWidth: 1 }]} onPress={() => onPressAction('directions')}>
           <Icon name="navigation" size={16} color={colors.text} />
           <Text style={[styles.actionText, { color: colors.text }]}>Directions</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.actionBtn, { backgroundColor: colors.background, borderColor: colors.border, borderWidth: 1 }]} onPress={() => onPressAction('samagri')}>
-          <Icon name="list" size={16} color={colors.text} />
-          <Text style={[styles.actionText, { color: colors.text }]}>Samagri</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>

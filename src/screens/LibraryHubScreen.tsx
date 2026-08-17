@@ -31,7 +31,7 @@ const LibraryHubScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <CustomHeader title="Pooja" icon="book-open" />
+      <CustomHeader title="Pooja" icon="book-open" showThemeToggle={true} />
       <View style={styles.header}>
         <Text style={[styles.headerSubtitle, { color: colors.textLight }]}>
           Access all your spiritual resources

@@ -27,6 +27,9 @@ const initI18n = async () => {
       interpolation: {
         escapeValue: false, // react already safes from xss
       },
+      react: {
+        useSuspense: false, // Prevent crashes if useTranslation is called before initialization
+      },
     });
 };
 
