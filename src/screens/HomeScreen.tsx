@@ -70,12 +70,12 @@ const HomeScreen = () => {
         {/* Quick Access Tools */}
         <View style={styles.quickAccessRow}>
           <TouchableOpacity
-            style={[styles.quickAccessCard, { backgroundColor: '#F97316' }]}
+            style={[styles.quickAccessCard, { backgroundColor: colors.secondary }]}
             onPress={() => navigation.navigate('Panchang')}
             activeOpacity={0.8}
           >
             <View style={styles.quickAccessIconBgWhite}>
-              <Icon name="sun" size={20} color="#F97316" />
+              <Icon name="sun" size={20} color={colors.secondary} />
             </View>
             <View style={styles.quickAccessTextContainer}>
               <Text style={styles.quickAccessTitleWhite}>Panchang</Text>
@@ -83,12 +83,12 @@ const HomeScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.quickAccessCard, { backgroundColor: colors.primary }]}
+            style={[styles.quickAccessCard, { backgroundColor: colors.success }]}
             onPress={() => navigation.navigate('Kundali')}
             activeOpacity={0.8}
           >
             <View style={styles.quickAccessIconBgWhite}>
-              <Icon name="star" size={20} color="#8B5CF6" />
+              <Icon name="star" size={20} color={colors.success} />
             </View>
             <View style={styles.quickAccessTextContainer}>
               <Text style={styles.quickAccessTitleWhite}>Kundali</Text>
@@ -100,10 +100,10 @@ const HomeScreen = () => {
         <AajKaKaamCard data={MOCK_AAJ_KA_KAAM} onPressAction={handleAction} />
 
         {/* 2. Daily Spiritual Card */}
-        <View style={[styles.spiritualCard, { backgroundColor: colors.primary + '15', borderColor: colors.primary }]}>
+        <View style={[styles.spiritualCard, { backgroundColor: colors.accent + '20', borderColor: colors.accent }]}>
           <View style={styles.spiritualHeader}>
-            <Icon name="sun" size={24} color={colors.primaryDark} />
-            <Text style={[styles.spiritualTitle, { color: colors.primaryDark }]}>{t('home.spiritual_card', 'Daily Spiritual Card')}</Text>
+            <Icon name="sun" size={24} color={colors.accent} />
+            <Text style={[styles.spiritualTitle, { color: colors.accent }]}>{t('home.spiritual_card', 'Daily Spiritual Card')}</Text>
           </View>
           <View style={styles.spiritualItem}>
             <Text style={[styles.spiritualLabel, { color: colors.text }]}>Today's Thought:</Text>
@@ -128,7 +128,7 @@ const HomeScreen = () => {
 
         {/* Quick Link to Calendar */}
         <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: colors.secondary }]}
+          style={[styles.actionButton, { backgroundColor: colors.primary }]}
           onPress={() => navigation.navigate('Calendar')}
         >
           <Icon name="calendar" size={20} color={colors.surface} />
@@ -138,16 +138,16 @@ const HomeScreen = () => {
         {/* 4. Today's Bookings & Tasks */}
         <View style={styles.listsContainer}>
           {renderSectionHeader(t('home.todays_bookings', 'Today\'s Bookings'), 'calendar')}
-          <View style={[styles.listItem, { backgroundColor: colors.surface, borderLeftColor: colors.primary }]}>
+          <View style={[styles.listItem, { backgroundColor: colors.surface, borderLeftColor: colors.secondary }]}>
             <View>
               <Text style={[styles.listItemTitle, { color: colors.text }]}>Ganesh Pooja</Text>
               <Text style={[styles.listItemSub, { color: colors.textLight }]}>Sharma Family • Andheri West</Text>
             </View>
-            <Text style={[styles.listItemTime, { color: colors.primary }]}>10:00 AM</Text>
+            <Text style={[styles.listItemTime, { color: colors.secondary }]}>10:00 AM</Text>
           </View>
 
           {renderSectionHeader(t('home.todays_tasks', 'Today\'s Tasks'), 'check-square')}
-          <View style={[styles.listItem, { backgroundColor: colors.surface, borderLeftColor: colors.secondary }]}>
+          <View style={[styles.listItem, { backgroundColor: colors.surface, borderLeftColor: colors.accent }]}>
             <View>
               <Text style={[styles.listItemTitle, { color: colors.text }]}>Prepare Pooja Samagri</Text>
               <Text style={[styles.listItemSub, { color: colors.textLight }]}>For evening Satyanarayan Katha</Text>
@@ -157,12 +157,12 @@ const HomeScreen = () => {
 
           {/* Subscription Status at the bottom */}
           {renderSectionHeader('Subscription Status', 'award')}
-          <View style={[styles.listItem, { backgroundColor: colors.surface, borderLeftColor: colors.primary }]}>
+          <View style={[styles.listItem, { backgroundColor: colors.surface, borderLeftColor: colors.success }]}>
             <View>
               <Text style={[styles.listItemTitle, { color: colors.text }]}>Premium Plan Active</Text>
               <Text style={[styles.listItemSub, { color: colors.textLight }]}>30 days remaining</Text>
             </View>
-            <Icon name="check-circle" size={24} color={colors.primary} />
+            <Icon name="check-circle" size={24} color={colors.success} />
           </View>
 
           {renderSectionHeader(t('home.community_discussions', 'Community Discussions'), 'message-circle')}

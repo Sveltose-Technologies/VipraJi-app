@@ -43,7 +43,7 @@ export const generateMockCalendarEvents = (): CalendarEvent[] => {
       date: getFormattedDate(-2),
       time: '06:00 PM',
       type: 'pooja',
-      status: 'completed',
+      status: 'done',
     },
     {
       id: 'e5',

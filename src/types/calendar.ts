@@ -1,5 +1,5 @@
 export type EventType = 'task' | 'pooja' | 'festival';
-export type EventStatus = 'completed' | 'upcoming' | 'cancelled' | 'festival';
+export type EventStatus = 'done' | 'upcoming' | 'cancelled' | 'festival';
 
 export interface CalendarEvent {
   id: string;

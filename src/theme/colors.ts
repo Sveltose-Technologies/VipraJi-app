@@ -1,11 +1,13 @@
 export const lightColors = {
-  primary: '#F97316', // Vibrant Orange
-  primaryDark: '#EA580C',
-  darkHeader: '#9A3412', // Deep Orange for header
-  secondary: '#3B82F6', // Royal Blue for contrast accents
-  background: '#F8FAFC', // Sleek slate-50
+  primary: '#8B0909', // Brand Maroon
+  primaryDark: '#680606',
+  darkHeader: '#4A0404', 
+  secondary: '#E84A0A', // Saffron
+  accent: '#D89008', // Temple Gold
+  success: '#174A0D', // Forest Green
+  background: '#FFF9EF', // Warm Ivory
   surface: '#FFFFFF', // White
-  text: '#0F172A', // Slate-900 for modern high contrast
+  text: '#0F172A', // Slate-900
   textLight: '#64748B', // Slate-500
   error: '#EF4444',
   border: '#E2E8F0', // Slate-200
@@ -14,17 +16,19 @@ export const lightColors = {
 };
 
 export const darkColors = {
-  primary: '#FB923C', // Bright Orange for dark mode
-  primaryDark: '#F97316',
-  darkHeader: '#431407', // Very dark orange/brown
-  secondary: '#60A5FA', // Light blue
-  background: '#0F172A', // Slate-900 background
-  surface: '#1E293B', // Slate-800 surface
-  text: '#F8FAFC', // Slate-50 text
-  textLight: '#94A3B8', // Slate-400
+  primary: '#8B0909', 
+  primaryDark: '#680606',
+  darkHeader: '#4A0404', 
+  secondary: '#E84A0A', 
+  accent: '#D89008',
+  success: '#174A0D',
+  background: '#0F172A', 
+  surface: '#1E293B', 
+  text: '#F8FAFC', 
+  textLight: '#94A3B8', 
   error: '#F87171',
-  border: '#334155', // Slate-700
-  inputBg: '#334155', // Slate-700
+  border: '#334155', 
+  inputBg: '#334155', 
   notch: '#000000'
 };
 

@@ -87,7 +87,7 @@ const GlobalSearch = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 16,
+    marginBottom: 16,
     zIndex: 10,
   },
   searchBox: {

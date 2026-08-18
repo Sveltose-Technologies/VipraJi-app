@@ -11,7 +11,7 @@ import CustomHeader from '../components/CustomHeader';
 
 const STATUS_COLORS: Record<EventStatus, string> = {
   upcoming: '#16A34A',   // Emerald Green
-  completed: '#2563EB',  // Royal Blue
+  done: '#2563EB',       // Royal Blue
   cancelled: '#DC2626',  // Red
   festival: '#F59E0B',   // Orange
 };
@@ -207,8 +207,7 @@ const CalendarScreen = () => {
         onPress={openAddModal}
         activeOpacity={0.9}
       >
-        <Icon name="plus" size={20} color="#FFF" />
-        <Text style={styles.fabText}>Add Event</Text>
+        <Icon name="plus" size={24} color="#FFF" />
       </TouchableOpacity>
 
       {/* Event Modal */}
@@ -355,11 +354,10 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    bottom: 7,
-    alignSelf: 'center',
-    flexDirection: 'row',
-    paddingVertical: 14,
-    paddingHorizontal: 24,
+    bottom: 20,
+    right: 20,
+    width: 60,
+    height: 60,
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',

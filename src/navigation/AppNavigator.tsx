@@ -22,6 +22,7 @@ import PoojaDetailScreen from '../screens/PoojaDetailScreen';
 import MenuScreen from '../screens/MenuScreen';
 import KundaliScreen from '../screens/KundaliScreen';
 import KundaliMatchingResultScreen from '../screens/KundaliMatchingResultScreen';
+import KundaliGeneratedScreen from '../screens/KundaliGeneratedScreen';
 import PanchangScreen from '../screens/PanchangScreen';
 import MuhurtScreen from '../screens/MuhurtScreen';
 import SamagriScreen from '../screens/SamagriScreen';
@@ -45,6 +46,12 @@ export type RootStackParamList = {
   PoojaDetail: { poojaId: string };
   Kundali: undefined;
   KundaliMatchingResult: undefined;
+  KundaliGenerated: {
+    name: string;
+    dob: string;
+    tob: string;
+    place: string;
+  };
   Panchang: undefined;
   Muhurt: undefined;
   Samagri: undefined;
@@ -148,6 +155,7 @@ const AppNavigator = () => {
           <Stack.Screen name="PoojaDetail" component={PoojaDetailScreen} options={{ presentation: 'card' }} />
           <Stack.Screen name="Kundali" component={KundaliScreen} />
           <Stack.Screen name="KundaliMatchingResult" component={KundaliMatchingResultScreen} />
+          <Stack.Screen name="KundaliGenerated" component={KundaliGeneratedScreen} />
           <Stack.Screen name="Panchang" component={PanchangScreen} />
           <Stack.Screen name="Muhurt" component={MuhurtScreen} />
           <Stack.Screen name="Samagri" component={SamagriScreen} />

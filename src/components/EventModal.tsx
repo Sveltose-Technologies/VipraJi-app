@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, ScrollView,
 import { useTheme } from '../theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Feather';
 import { CalendarEvent, EventType, EventStatus } from '../types/calendar';
+import DatePicker from 'react-native-date-picker';
 
 interface EventModalProps {
   visible: boolean;
@@ -28,6 +29,7 @@ const EventModal: React.FC<EventModalProps> = ({
   const [status, setStatus] = useState<EventStatus>('upcoming');
   const [time, setTime] = useState('');
   const [description, setDescription] = useState('');
+  const [timePickerVisible, setTimePickerVisible] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -69,16 +71,10 @@ const EventModal: React.FC<EventModalProps> = ({
         <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
 
           {/* Header */}
-          <View style={[styles.header, { borderBottomColor: colors.border }]}>
-            <TouchableOpacity onPress={onClose} style={styles.iconButton}>
-              <Icon name="x" size={24} color={colors.text} />
-            </TouchableOpacity>
-            <Text style={[styles.headerTitle, { color: colors.text }]}>
+          <View style={[styles.header, { borderBottomColor: colors.border, backgroundColor: colors.primary }]}>
+            <Text style={[styles.headerTitle, { color: '#FFF' }]}>
               {initialData ? 'Edit Event' : 'Add Event'}
             </Text>
-            <TouchableOpacity onPress={handleSave} style={styles.iconButton}>
-              <Icon name="check" size={24} color={title.trim() ? colors.primary : colors.textLight} />
-            </TouchableOpacity>
           </View>
 
           <ScrollView contentContainerStyle={styles.content}>
@@ -94,12 +90,35 @@ const EventModal: React.FC<EventModalProps> = ({
 
             {/* Time Input */}
             <Text style={[styles.label, { color: colors.text }]}>Time</Text>
-            <TextInput
-              style={[styles.input, { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface }]}
-              placeholder="e.g. 10:30 AM"
-              placeholderTextColor={colors.textLight}
-              value={time}
-              onChangeText={setTime}
+            <TouchableOpacity
+              style={[
+                styles.input, 
+                { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface, justifyContent: 'center' }
+              ]}
+              onPress={() => setTimePickerVisible(true)}
+            >
+              <Text style={{ color: time ? colors.text : colors.textLight, fontSize: 16 }}>
+                {time || 'Select Time'}
+              </Text>
+            </TouchableOpacity>
+
+            <DatePicker
+              modal
+              open={timePickerVisible}
+              date={new Date()}
+              mode="time"
+              onConfirm={(date) => {
+                setTimePickerVisible(false);
+                let hours = date.getHours();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                setTime(`${String(hours).padStart(2, '0')}:${minutes} ${ampm}`);
+              }}
+              onCancel={() => {
+                setTimePickerVisible(false);
+              }}
             />
 
             {/* Event Type Selector */}
@@ -128,7 +147,7 @@ const EventModal: React.FC<EventModalProps> = ({
             {/* Status Selector */}
             <Text style={[styles.label, { color: colors.text }]}>Status</Text>
             <View style={styles.segmentedControl}>
-              {(['upcoming', 'completed', 'cancelled'] as EventStatus[]).map((s) => (
+              {(['upcoming', 'done', 'cancelled'] as EventStatus[]).map((s) => (
                 <TouchableOpacity
                   key={s}
                   style={[
@@ -142,7 +161,7 @@ const EventModal: React.FC<EventModalProps> = ({
                     styles.segmentText,
                     { color: status === s ? '#FFF' : colors.text }
                   ]}>
-                    {s.charAt(0).toUpperCase() + s.slice(1)}
+                    {s === 'done' ? 'Done' : s.charAt(0).toUpperCase() + s.slice(1)}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -175,6 +194,22 @@ const EventModal: React.FC<EventModalProps> = ({
               </TouchableOpacity>
             )}
 
+            {/* Action Buttons */}
+            <View style={styles.actionButtonsContainer}>
+              <TouchableOpacity
+                style={[styles.actionButton, { borderColor: colors.primary, borderWidth: 1, backgroundColor: 'transparent' }]}
+                onPress={onClose}
+              >
+                <Text style={[styles.cancelButtonText, { color: colors.primary }]}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.actionButton, { backgroundColor: colors.primary }]}
+                onPress={handleSave}
+              >
+                <Text style={[styles.saveButtonText, { color: '#FFF' }]}>Save</Text>
+              </TouchableOpacity>
+            </View>
+
           </ScrollView>
         </View>
       </View>
@@ -201,7 +236,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
@@ -250,6 +285,28 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 8,
     fontSize: 16,
+  },
+  actionButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 24,
+    gap: 12,
+  },
+  actionButton: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 6,
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  saveButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
   }
 });
 

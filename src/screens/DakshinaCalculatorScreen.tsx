@@ -4,7 +4,7 @@ import { useTheme } from '../theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Feather';
 import { useTranslation } from 'react-i18next';
 import CustomHeader from '../components/CustomHeader';
-import { Calendar, DateData } from 'react-native-calendars';
+import DatePicker from 'react-native-date-picker';
 
 const DakshinaCalculatorScreen = () => {
   const { colors, isDark } = useTheme();
@@ -13,7 +13,7 @@ const DakshinaCalculatorScreen = () => {
   const [poojaName, setPoojaName] = useState('');
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
-  const [showCalendar, setShowCalendar] = useState(false);
+  const [pickerVisible, setPickerVisible] = useState(false);
   const [calendarMode, setCalendarMode] = useState<'start' | 'end'>('start');
 
   const [acharyaPerDay, setAcharyaPerDay] = useState('');
@@ -44,21 +44,20 @@ const DakshinaCalculatorScreen = () => {
   const finalAmount = acharyaTotal + panditTotal;
   const totalAmount = finalAmount + D + E;
 
-  const handleDayPress = (day: DateData) => {
+  const handleDateConfirm = (date: Date) => {
+    const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     if (calendarMode === 'start') {
-      setStartDate(day.dateString);
-      // Auto adjust end date if it's before start date
-      if (endDate && new Date(endDate) < new Date(day.dateString)) {
-        setEndDate(day.dateString);
+      setStartDate(formattedDate);
+      if (endDate && new Date(endDate) < date) {
+        setEndDate(formattedDate);
       }
     } else {
-      setEndDate(day.dateString);
-      // Auto adjust start date if it's after end date
-      if (startDate && new Date(startDate) > new Date(day.dateString)) {
-        setStartDate(day.dateString);
+      setEndDate(formattedDate);
+      if (startDate && new Date(startDate) > date) {
+        setStartDate(formattedDate);
       }
     }
-    setShowCalendar(false);
+    setPickerVisible(false);
   };
 
   const renderInput = (
@@ -91,7 +90,11 @@ const DakshinaCalculatorScreen = () => {
 
   const formatDate = (dateString: string) => {
     if (!dateString) return 'Select Date';
-    return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const parts = dateString.split('-');
+    if (parts.length === 3) {
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+    return dateString;
   };
 
   return (
@@ -101,27 +104,27 @@ const DakshinaCalculatorScreen = () => {
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <ScrollView 
-          style={[styles.container, { backgroundColor: colors.background }]} 
+        <ScrollView
+          style={[styles.container, { backgroundColor: colors.background }]}
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.header}>
+          {/* <View style={styles.header}>
             <Text style={[styles.subtitle, { color: colors.textLight }]}>
               {t('dakshina_calc.subtitle', 'Calculate pooja dakshina with dates and additional expenses.')}
             </Text>
-          </View>
+          </View> */}
 
           {/* Pooja Details */}
           <View style={styles.section}>
             {renderInput(t('dakshina_calc.pooja_name', 'Pooja Name'), poojaName, setPoojaName, 'file-text', 'e.g., Satyanarayan Pooja')}
-            
+
             <View style={styles.datesRow}>
               <View style={styles.datePickerContainer}>
                 <Text style={[styles.label, { color: colors.text }]}>Start Date</Text>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[styles.dateButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
-                  onPress={() => { setCalendarMode('start'); setShowCalendar(true); }}
+                  onPress={() => { setCalendarMode('start'); setPickerVisible(true); }}
                 >
                   <Icon name="calendar" size={16} color={colors.primary} style={styles.inputIcon} />
                   <Text style={[styles.dateText, { color: startDate ? colors.text : colors.textLight }]} numberOfLines={1}>
@@ -134,9 +137,9 @@ const DakshinaCalculatorScreen = () => {
 
               <View style={styles.datePickerContainer}>
                 <Text style={[styles.label, { color: colors.text }]}>End Date</Text>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[styles.dateButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
-                  onPress={() => { setCalendarMode('end'); setShowCalendar(true); }}
+                  onPress={() => { setCalendarMode('end'); setPickerVisible(true); }}
                 >
                   <Icon name="calendar" size={16} color={colors.primary} style={styles.inputIcon} />
                   <Text style={[styles.dateText, { color: endDate ? colors.text : colors.textLight }]} numberOfLines={1}>
@@ -145,17 +148,17 @@ const DakshinaCalculatorScreen = () => {
                 </TouchableOpacity>
               </View>
             </View>
-            
+
             <View style={[styles.daysBadge, { backgroundColor: colors.primary + '15', borderColor: colors.primary }]}>
-               <Icon name="clock" size={18} color={colors.primaryDark} />
-               <Text style={[styles.daysBadgeText, { color: colors.primaryDark }]}>
-                 Total Pooja Days: {calculatedDays}
-               </Text>
+              <Icon name="clock" size={18} color={colors.primaryDark} />
+              <Text style={[styles.daysBadgeText, { color: colors.primaryDark }]}>
+                Total Pooja Days: {calculatedDays}
+              </Text>
             </View>
           </View>
 
           <View style={[styles.divider, { backgroundColor: colors.border }]} />
-          
+
           {/* Per Day Amounts - Side by Side */}
           <View style={styles.row}>
             {renderInput(t('dakshina_calc.acharya_amt', 'Acharya / Day'), acharyaPerDay, setAcharyaPerDay, 'user', 'e.g., 2100')}
@@ -164,7 +167,7 @@ const DakshinaCalculatorScreen = () => {
           </View>
 
           <View style={[styles.divider, { backgroundColor: colors.border }]} />
-          
+
           {/* Optional Amounts - Side by Side */}
           <View style={styles.row}>
             {renderInput(t('dakshina_calc.samagri_amt', 'Samagri'), samagriAmount, setSamagriAmount, 'shopping-bag', 'e.g., 5000', true)}
@@ -177,9 +180,9 @@ const DakshinaCalculatorScreen = () => {
               <Icon name="file-text" size={20} color="#FFF" />
               <Text style={styles.resultTitle}>{t('dakshina_calc.summary', 'Calculation Summary')}</Text>
             </View>
-            
+
             {poojaName ? (
-               <Text style={styles.poojaNameTitle}>{poojaName}</Text>
+              <Text style={styles.poojaNameTitle}>{poojaName}</Text>
             ) : null}
 
             <View style={styles.resultRow}>
@@ -217,51 +220,27 @@ const DakshinaCalculatorScreen = () => {
               <Text style={styles.grandTotalValue}>₹{totalAmount.toFixed(2)}</Text>
             </View>
           </View>
-          
+
           <View style={{ height: 40 }} />
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {/* Calendar Modal */}
-      <Modal
-        visible={showCalendar}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setShowCalendar(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
-            <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: colors.text }]}>
-                Select {calendarMode === 'start' ? 'Start Date' : 'End Date'}
-              </Text>
-              <TouchableOpacity onPress={() => setShowCalendar(false)}>
-                <Icon name="x" size={24} color={colors.textLight} />
-              </TouchableOpacity>
-            </View>
-            <Calendar
-              current={calendarMode === 'start' ? startDate : endDate}
-              onDayPress={handleDayPress}
-              minDate={calendarMode === 'end' && startDate ? startDate : undefined}
-              theme={{
-                calendarBackground: colors.surface,
-                textSectionTitleColor: colors.textLight,
-                dayTextColor: colors.text,
-                todayTextColor: colors.primary,
-                selectedDayTextColor: colors.text,
-                monthTextColor: colors.text,
-                arrowColor: colors.primary,
-              }}
-              markedDates={{
-                ...(startDate ? { [startDate]: { startingDay: true, color: colors.primary, textColor: 'white' } } : {}),
-                ...(endDate ? { [endDate]: { endingDay: true, color: colors.primary, textColor: 'white' } } : {}),
-                ...(calendarMode === 'start' && startDate ? { [startDate]: { selected: true, selectedColor: colors.primary } } : {}),
-                ...(calendarMode === 'end' && endDate ? { [endDate]: { selected: true, selectedColor: colors.primary } } : {})
-              }}
-            />
-          </View>
-        </View>
-      </Modal>
+      {/* Date Picker */}
+      <DatePicker
+        modal
+        open={pickerVisible}
+        date={
+          calendarMode === 'start' && startDate
+            ? new Date(startDate)
+            : calendarMode === 'end' && endDate
+              ? new Date(endDate)
+              : new Date()
+        }
+        mode="date"
+        onConfirm={handleDateConfirm}
+        onCancel={() => setPickerVisible(false)}
+        minimumDate={calendarMode === 'end' && startDate ? new Date(startDate) : undefined}
+      />
     </View>
   );
 };
@@ -282,12 +261,12 @@ const styles = StyleSheet.create({
   inputWrapper: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 10, paddingHorizontal: 10, height: 48 },
   inputIcon: { marginRight: 8 },
   input: { flex: 1, fontSize: 14, height: '100%' },
-  
+
   datesRow: { flexDirection: 'row', marginBottom: 16, marginTop: 4 },
   datePickerContainer: { flex: 1 },
   dateButton: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 10, paddingHorizontal: 10, height: 48, marginTop: 6 },
   dateText: { fontSize: 14, flex: 1 },
-  
+
   daysBadge: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 12, borderRadius: 10, borderWidth: 1 },
   daysBadgeText: { fontSize: 15, fontWeight: 'bold', marginLeft: 8 },
 
@@ -305,10 +284,6 @@ const styles = StyleSheet.create({
   grandTotalLabel: { color: '#FFF', fontSize: 16, fontWeight: 'bold' },
   grandTotalValue: { color: '#FFF', fontSize: 20, fontWeight: 'bold' },
 
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
-  modalContent: { width: '90%', borderRadius: 16, padding: 16, elevation: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 10 },
-  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  modalTitle: { fontSize: 18, fontWeight: 'bold' },
 });
 
 export default DakshinaCalculatorScreen;
