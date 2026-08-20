@@ -37,6 +37,7 @@ import SubscriptionScreen from '../screens/SubscriptionScreen';
 import DakshinaCalculatorScreen from '../screens/DakshinaCalculatorScreen';
 import HistoryScreen from '../screens/HistoryScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
+import SubscriptionReminderModal from '../components/SubscriptionReminderModal';
 
 export type RootStackParamList = {
   Auth: undefined;
@@ -99,7 +100,8 @@ const MainTabNavigator = () => {
   const insets = useSafeAreaInsets();
   
   return (
-    <Tab.Navigator
+    <>
+      <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
         // eslint-disable-next-line react/no-unstable-nested-components
@@ -130,6 +132,8 @@ const MainTabNavigator = () => {
       <Tab.Screen name="DakshinaCalculator" component={DakshinaCalculatorScreen} options={{ tabBarLabel: t('tabs.dakshina', 'Dakshina') }} />
       <Tab.Screen name="Menu" component={MenuScreen} options={{ tabBarLabel: t('tabs.menu', 'Menu') }} />
     </Tab.Navigator>
+    <SubscriptionReminderModal />
+  </>
   );
 };
 
@@ -147,7 +151,7 @@ const AppNavigator = () => {
   }
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
       {isAuthenticated || isGuest ? (
         <>
           <Stack.Screen name="MainTabs" component={MainTabNavigator} />

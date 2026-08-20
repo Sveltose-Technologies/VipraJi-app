@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated, Pressable } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Feather';
 import { AajKaKaam } from '../data/mockDashboard';
@@ -9,20 +9,73 @@ interface Props {
   onPressAction: (action: string) => void;
 }
 
+const AnimatedButton = ({ onPress, style, children }: any) => {
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scale, { toValue: 0.9, useNativeDriver: true }).start();
+  };
+  const handlePressOut = () => {
+    Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start();
+  };
+
+  return (
+    <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut} onPress={onPress}>
+      <Animated.View style={[style, { transform: [{ scale }] }]}>
+        {children}
+      </Animated.View>
+    </Pressable>
+  );
+};
+
 const AajKaKaamCard: React.FC<Props> = ({ data, onPressAction }) => {
   const { colors, isDark } = useTheme();
 
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+  const timeRotateAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    // Initial 360 rotation
+    Animated.timing(rotateAnim, {
+      toValue: 1,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
+
+    // Rotate 360 horizontally every minute
+    const interval = setInterval(() => {
+      timeRotateAnim.setValue(0);
+      Animated.timing(timeRotateAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }).start();
+    }, 6000);
+
+    return () => clearInterval(interval);
+  }, [rotateAnim, timeRotateAnim]);
+
+  const spin = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg']
+  });
+
+  const timeSpin = timeRotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg']
+  });
+
   return (
-    <View style={[styles.container, { backgroundColor: colors.primary, borderColor: colors.primary }]}>
+    <Animated.View style={[styles.container, { backgroundColor: colors.primary, borderColor: colors.primary, transform: [{ rotateY: spin }] }]}>
       <View style={styles.header}>
         <View style={styles.headerTitleRow}>
           <Icon name="sun" size={20} color="#FFF" />
           <Text style={[styles.headerTitle, { color: '#FFF' }]}>Aaj Ka Kaam</Text>
         </View>
-        <View style={[styles.timeBadge, { backgroundColor: '#FFF' }]}>
+        <Animated.View style={[styles.timeBadge, { backgroundColor: '#FFF', transform: [{ rotateY: timeSpin }] }]}>
           <Icon name="clock" size={14} color={colors.primary} />
           <Text style={[styles.timeText, { color: colors.primary }]}>{data.time}</Text>
-        </View>
+        </Animated.View>
       </View>
 
       <View style={styles.detailsRow}>
@@ -51,22 +104,22 @@ const AajKaKaamCard: React.FC<Props> = ({ data, onPressAction }) => {
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.actionsScroll}>
-        <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#FFF' }]} onPress={() => onPressAction('call')}>
+        <AnimatedButton style={[styles.actionBtn, { backgroundColor: '#FFF' }]} onPress={() => onPressAction('call')}>
           <Icon name="phone" size={16} color={colors.primary} />
           <Text style={[styles.actionText, { color: colors.primary }]}>Call</Text>
-        </TouchableOpacity>
+        </AnimatedButton>
 
-        <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#25D366' }]} onPress={() => onPressAction('whatsapp')}>
+        <AnimatedButton style={[styles.actionBtn, { backgroundColor: '#25D366' }]} onPress={() => onPressAction('whatsapp')}>
           <Icon name="message-circle" size={16} color="#FFF" />
           <Text style={[styles.actionText, { color: '#FFF' }]}>WhatsApp</Text>
-        </TouchableOpacity>
+        </AnimatedButton>
 
-        <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#FFF' }]} onPress={() => onPressAction('directions')}>
+        <AnimatedButton style={[styles.actionBtn, { backgroundColor: '#FFF' }]} onPress={() => onPressAction('directions')}>
           <Icon name="navigation" size={16} color={colors.primary} />
           <Text style={[styles.actionText, { color: colors.primary }]}>Directions</Text>
-        </TouchableOpacity>
+        </AnimatedButton>
       </ScrollView>
-    </View>
+    </Animated.View>
   );
 };
 

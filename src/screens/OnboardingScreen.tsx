@@ -11,19 +11,19 @@ const SLIDES = [
     id: '1',
     title: 'Welcome to Vipra Sathi',
     description: 'Your digital companion for daily spiritual practices, poojas, and panchang.',
-    image: require('../assets/images/onboarding_1.png')
+    image: require('../assets/images/onboarding_1.jpg')
   },
   {
     id: '2',
     title: 'Daily Panchang & Muhurt',
     description: 'Stay updated with accurate daily panchang, auspicious timings, and personalized alerts.',
-    image: require('../assets/images/onboarding_2.png')
+    image: require('../assets/images/onboarding_2.jpg')
   },
   {
     id: '3',
     title: 'Library of Mantras & Poojas',
     description: 'Access a vast library of aartis, stotrams, and complete pooja guidelines.',
-    image: require('../assets/images/onboarding_3.png')
+    image: require('../assets/images/onboarding_3.jpg')
   }
 ];
 
