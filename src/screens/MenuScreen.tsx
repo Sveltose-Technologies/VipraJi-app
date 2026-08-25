@@ -16,8 +16,9 @@ const MenuScreen = () => {
   const { t } = useTranslation();
 
   const menuItems = [
+    { title: t('menu.yajmanManager', 'Yajman Manager'), icon: 'users', screen: 'YajmanList' },
     { title: t('menu.profile', 'Profile & Branding'), icon: 'user', screen: 'Profile' },
-    { title: t('menu.community', 'Community'), icon: 'users', screen: 'Community' },
+    { title: t('menu.community', 'Community'), icon: 'message-circle', screen: 'Community' },
     { title: t('menu.subscription', 'Subscription & Wallet'), icon: 'credit-card', screen: 'Subscription' },
     { title: t('menu.history', 'Work History'), icon: 'clock', screen: 'History' },
     { title: t('menu.help', 'Help Center'), icon: 'help-circle', screen: 'HelpCenter' },

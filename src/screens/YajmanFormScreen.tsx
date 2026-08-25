@@ -1,0 +1,343 @@
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Alert, StatusBar } from 'react-native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Feather';
+import DatePicker from 'react-native-date-picker';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { RootStackParamList } from '../navigation/AppNavigator';
+import { useTheme } from '../theme/ThemeContext';
+import { useTranslation } from 'react-i18next';
+import { useYajmans } from '../hooks/useYajmans';
+import { YajmanCategory } from '../types/yajman';
+
+type FormRouteProp = RouteProp<RootStackParamList, 'YajmanForm'>;
+
+const CATEGORIES: YajmanCategory[] = ['Astrology', 'Karmkand', 'Vaastu', 'Hastrekha', 'Others'];
+
+const YajmanFormScreen = () => {
+  const { colors, isDark } = useTheme();
+  const navigation = useNavigation();
+  const route = useRoute<FormRouteProp>();
+  const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
+  const { addYajman, updateYajman } = useYajmans();
+  
+  const existingYajman = route.params?.yajman;
+  const isEditing = !!existingYajman;
+
+  const [formData, setFormData] = useState({
+    name: existingYajman?.name || '',
+    email: existingYajman?.email || '',
+    callingMobile: existingYajman?.callingMobile || '',
+    whatsappMobile: existingYajman?.whatsappMobile || '',
+    city: existingYajman?.city || '',
+    state: existingYajman?.state || '',
+    address: existingYajman?.address || '',
+    category: existingYajman?.category || 'Karmkand',
+    yearlyProgramName: existingYajman?.yearlyProgramName || '',
+    remark: existingYajman?.remark || '',
+  });
+
+  const [dates, setDates] = useState({
+    birthday: existingYajman?.birthday ? new Date(existingYajman.birthday) : null,
+    anniversary: existingYajman?.anniversary ? new Date(existingYajman.anniversary) : null,
+    yearlyProgramDate: existingYajman?.yearlyProgramDate ? new Date(existingYajman.yearlyProgramDate) : null,
+    kycDate: existingYajman?.kycDate ? new Date(existingYajman.kycDate) : new Date(),
+  });
+
+  const [datePickerConfig, setDatePickerConfig] = useState<{ open: boolean, field: keyof typeof dates | null }>({
+    open: false,
+    field: null
+  });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSave = async () => {
+    // Validation
+    const newErrors: Record<string, string> = {};
+    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!formData.callingMobile.trim()) newErrors.callingMobile = 'Mobile number is required';
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const formatDate = (date: Date | null) => date ? date.toISOString().split('T')[0] : undefined;
+      
+      const payload = {
+        ...formData,
+        birthday: formatDate(dates.birthday),
+        anniversary: formatDate(dates.anniversary),
+        yearlyProgramDate: formatDate(dates.yearlyProgramDate),
+        kycDate: formatDate(dates.kycDate) || new Date().toISOString().split('T')[0],
+      };
+
+      if (isEditing) {
+        await updateYajman(existingYajman.id, payload);
+      } else {
+        await addYajman(payload);
+      }
+      
+      navigation.goBack();
+    } catch (error) {
+      // Error handled by hook/axios interceptor
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const openDatePicker = (field: keyof typeof dates) => {
+    setDatePickerConfig({ open: true, field });
+  };
+
+  const renderInput = (
+    field: keyof typeof formData,
+    label: string, 
+    placeholder: string, 
+    options?: { keyboardType?: 'numeric' | 'email-address' | 'default', multiline?: boolean }
+  ) => (
+    <View style={styles.inputGroup}>
+      <Text style={[styles.label, { color: colors.text }]}>{label} {errors[field] && <Text style={styles.errorText}>*</Text>}</Text>
+      <TextInput
+        style={[
+          styles.input, 
+          { backgroundColor: colors.surface, color: colors.text, borderColor: errors[field] ? '#ef4444' : colors.border },
+          options?.multiline && styles.textArea
+        ]}
+        placeholder={placeholder}
+        placeholderTextColor={colors.textLight}
+        value={formData[field]}
+        onChangeText={(text) => {
+          setFormData({ ...formData, [field]: text });
+          if (errors[field]) setErrors({ ...errors, [field]: '' });
+        }}
+        keyboardType={options?.keyboardType || 'default'}
+        multiline={options?.multiline}
+        textAlignVertical={options?.multiline ? 'top' : 'center'}
+      />
+      {errors[field] && <Text style={styles.errorMsg}>{errors[field]}</Text>}
+    </View>
+  );
+
+  const renderDatePicker = (field: keyof typeof dates, label: string) => (
+    <View style={styles.inputGroup}>
+      <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
+      <TouchableOpacity 
+        style={[styles.dateInput, { backgroundColor: colors.surface, borderColor: colors.border }]}
+        onPress={() => openDatePicker(field)}
+      >
+        <Text style={{ color: dates[field] ? colors.text : colors.textLight }}>
+          {dates[field] ? dates[field]!.toLocaleDateString() : `Select ${label}`}
+        </Text>
+        <Icon name="calendar" size={18} color={colors.textLight} />
+      </TouchableOpacity>
+    </View>
+  );
+
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background, paddingBottom: insets.bottom }]}>
+      <StatusBar barStyle="light-content" backgroundColor={colors.darkHeader} translucent={true} />
+      {/* Custom Header for Modal */}
+      <View style={[styles.header, { backgroundColor: colors.darkHeader, borderBottomColor: colors.darkHeader, paddingTop: Math.max(insets.top, 14) }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerBtn}>
+          <Icon name="x" size={24} color="#FFF" />
+        </TouchableOpacity>
+        <Text style={[styles.headerTitle, { color: '#FFF' }]}>
+          {isEditing ? 'Edit Yajman' : 'New Yajman'}
+        </Text>
+        <TouchableOpacity onPress={handleSave} style={styles.headerBtn} disabled={isSubmitting}>
+          <Text style={[styles.saveText, { color: isSubmitting ? 'rgba(255,255,255,0.6)' : '#FFF' }]}>
+            {isSubmitting ? 'Saving...' : 'Save'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView style={styles.scrollContent} contentContainerStyle={styles.scrollContainer}>
+        
+        {/* Personal Info */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.primary }]}>Personal Details</Text>
+          {renderInput('name', 'Full Name', 'Enter yajman name')}
+          
+          <View style={styles.inputGroup}>
+            <Text style={[styles.label, { color: colors.text }]}>Category</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
+              {CATEGORIES.map(cat => (
+                <TouchableOpacity
+                  key={cat}
+                  style={[
+                    styles.categoryChip,
+                    { 
+                      backgroundColor: formData.category === cat ? colors.primary : colors.surface,
+                      borderColor: formData.category === cat ? colors.primary : colors.border
+                    }
+                  ]}
+                  onPress={() => setFormData({ ...formData, category: cat })}
+                >
+                  <Text style={{ color: formData.category === cat ? '#FFF' : colors.text, fontSize: 13 }}>{cat}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+
+        {/* Contact Info */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.primary }]}>Contact Information</Text>
+          {renderInput('callingMobile', 'Mobile Number', 'Enter 10-digit number', { keyboardType: 'numeric' })}
+          {renderInput('whatsappMobile', 'WhatsApp Number', 'Enter WhatsApp number', { keyboardType: 'numeric' })}
+          {renderInput('email', 'Email Address', 'Enter email address', { keyboardType: 'email-address' })}
+        </View>
+
+        {/* Important Dates */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.primary }]}>Important Dates</Text>
+          <View style={styles.row}>
+            <View style={styles.col}>{renderDatePicker('birthday', 'Birthday')}</View>
+            <View style={styles.col}>{renderDatePicker('anniversary', 'Anniversary')}</View>
+          </View>
+          
+          {renderInput('yearlyProgramName', 'Yearly Program Name', 'e.g. Yearly Shraddha / Tithi')}
+          {renderDatePicker('yearlyProgramDate', 'Yearly Program Date')}
+        </View>
+
+        {/* Address */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.primary }]}>Address Details</Text>
+          <View style={styles.row}>
+            <View style={styles.col}>{renderInput('city', 'City', 'Enter city')}</View>
+            <View style={styles.col}>{renderInput('state', 'State', 'Enter state')}</View>
+          </View>
+          {renderInput('address', 'Full Address', 'Enter complete address', { multiline: true })}
+        </View>
+
+        {/* Other */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.primary }]}>Other Information</Text>
+          {renderDatePicker('kycDate', 'KYC Date')}
+          {renderInput('remark', 'Remarks / Notes', 'Any additional notes about this yajman', { multiline: true })}
+        </View>
+
+      </ScrollView>
+
+      <DatePicker
+        modal
+        open={datePickerConfig.open}
+        date={datePickerConfig.field && dates[datePickerConfig.field] ? dates[datePickerConfig.field]! : new Date()}
+        mode="date"
+        onConfirm={(date) => {
+          if (datePickerConfig.field) {
+            setDates({ ...dates, [datePickerConfig.field]: date });
+          }
+          setDatePickerConfig({ open: false, field: null });
+        }}
+        onCancel={() => {
+          setDatePickerConfig({ open: false, field: null });
+        }}
+      />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+  },
+  headerBtn: {
+    padding: 4,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  saveText: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  scrollContent: {
+    flex: 1,
+  },
+  scrollContainer: {
+    padding: 16,
+    paddingBottom: 40,
+  },
+  section: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 12,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  inputGroup: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: '500',
+    marginBottom: 6,
+    marginLeft: 4,
+  },
+  input: {
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    height: 52,
+    fontSize: 15,
+  },
+  textArea: {
+    height: 100,
+    paddingTop: 12,
+  },
+  errorText: {
+    color: '#ef4444',
+  },
+  errorMsg: {
+    color: '#ef4444',
+    fontSize: 12,
+    marginTop: 4,
+    marginLeft: 4,
+  },
+  row: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  col: {
+    flex: 1,
+  },
+  dateInput: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    height: 52,
+  },
+  categoryScroll: {
+    flexDirection: 'row',
+  },
+  categoryChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    marginRight: 8,
+  }
+});
+
+export default YajmanFormScreen;

@@ -38,6 +38,10 @@ import DakshinaCalculatorScreen from '../screens/DakshinaCalculatorScreen';
 import HistoryScreen from '../screens/HistoryScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import SubscriptionReminderModal from '../components/SubscriptionReminderModal';
+import YajmanListScreen from '../screens/YajmanListScreen';
+import YajmanFormScreen from '../screens/YajmanFormScreen';
+import YajmanDetailScreen from '../screens/YajmanDetailScreen';
+import { Yajman } from '../types/yajman';
 
 export type RootStackParamList = {
   Auth: undefined;
@@ -68,6 +72,9 @@ export type RootStackParamList = {
   Notifications: undefined;
   Profile: undefined;
   Settings: undefined;
+  YajmanList: undefined;
+  YajmanForm: { yajman?: Yajman }; // Optional for edit mode
+  YajmanDetail: { yajman: Yajman };
 };
 
 export type AuthStackParamList = {
@@ -175,6 +182,9 @@ const AppNavigator = () => {
           <Stack.Screen name="PostDetail" component={PostDetailScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name="YajmanList" component={YajmanListScreen} />
+          <Stack.Screen name="YajmanForm" component={YajmanFormScreen} options={{ presentation: 'modal' }} />
+          <Stack.Screen name="YajmanDetail" component={YajmanDetailScreen} />
         </>
       ) : !hasSeenOnboarding ? (
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />

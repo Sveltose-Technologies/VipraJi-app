@@ -66,47 +66,47 @@ const AajKaKaamCard: React.FC<Props> = ({ data, onPressAction }) => {
   });
 
   return (
-    <Animated.View style={[styles.container, { backgroundColor: colors.primary, borderColor: colors.primary, transform: [{ rotateY: spin }] }]}>
+    <Animated.View style={[styles.container, { backgroundColor: colors.surface, borderColor: colors.primary, transform: [{ rotateY: spin }] }]}>
       <View style={styles.header}>
         <View style={styles.headerTitleRow}>
-          <Icon name="sun" size={20} color="#FFF" />
-          <Text style={[styles.headerTitle, { color: '#FFF' }]}>Aaj Ka Kaam</Text>
+          <Icon name="sun" size={20} color={colors.primary} />
+          <Text style={[styles.headerTitle, { color: colors.primary }]}>Aaj Ka Kaam</Text>
         </View>
-        <Animated.View style={[styles.timeBadge, { backgroundColor: '#FFF', transform: [{ rotateY: timeSpin }] }]}>
-          <Icon name="clock" size={14} color={colors.primary} />
-          <Text style={[styles.timeText, { color: colors.primary }]}>{data.time}</Text>
+        <Animated.View style={[styles.timeBadge, { backgroundColor: colors.primary, transform: [{ rotateY: timeSpin }] }]}>
+          <Icon name="clock" size={14} color="#FFF" />
+          <Text style={[styles.timeText, { color: '#FFF' }]}>{data.time}</Text>
         </Animated.View>
       </View>
 
       <View style={styles.detailsRow}>
-        <Text style={[styles.poojaName, { color: '#FFF' }]}>{data.poojaName}</Text>
-        <Text style={[styles.separator, { color: 'rgba(255,255,255,0.6)' }]}>•</Text>
-        <Text style={[styles.yajmanName, { color: 'rgba(255,255,255,0.9)' }]}>{data.yajmanName}</Text>
+        <Text style={[styles.poojaName, { color: colors.text }]}>{data.poojaName}</Text>
+        <Text style={[styles.separator, { color: colors.textLight }]}>•</Text>
+        <Text style={[styles.yajmanName, { color: colors.text }]}>{data.yajmanName}</Text>
       </View>
 
-      <View style={[styles.metaData, { backgroundColor: 'rgba(255,255,255,0.15)' }]}>
+      <View style={[styles.metaData, { backgroundColor: colors.primary + '15' }]}>
         <View style={styles.metaRow}>
-          <Icon name="map-pin" size={14} color="rgba(255,255,255,0.9)" />
-          <Text style={[styles.metaText, { color: "rgba(255,255,255,0.9)" }]} numberOfLines={1}>{data.address}</Text>
+          <Icon name="map-pin" size={14} color={colors.primary} />
+          <Text style={[styles.metaText, { color: colors.text }]} numberOfLines={1}>{data.address}</Text>
         </View>
         <View style={styles.metaRow}>
-          <Icon name="credit-card" size={14} color="rgba(255,255,255,0.9)" />
-          <Text style={[styles.metaText, { color: "rgba(255,255,255,0.9)" }]}>
+          <Icon name="credit-card" size={14} color={colors.primary} />
+          <Text style={[styles.metaText, { color: colors.text }]}>
             Dakshina: {data.dakshinaAmount} ({data.dakshinaStatus})
           </Text>
         </View>
         <View style={styles.metaRow}>
-          <Icon name="info" size={14} color="rgba(255,255,255,0.9)" />
-          <Text style={[styles.metaText, { color: "rgba(255,255,255,0.9)" }]} numberOfLines={2}>
+          <Icon name="info" size={14} color={colors.primary} />
+          <Text style={[styles.metaText, { color: colors.text }]} numberOfLines={2}>
             Note: {data.notes}
           </Text>
         </View>
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.actionsScroll}>
-        <AnimatedButton style={[styles.actionBtn, { backgroundColor: '#FFF' }]} onPress={() => onPressAction('call')}>
-          <Icon name="phone" size={16} color={colors.primary} />
-          <Text style={[styles.actionText, { color: colors.primary }]}>Call</Text>
+        <AnimatedButton style={[styles.actionBtn, { backgroundColor: colors.primary }]} onPress={() => onPressAction('call')}>
+          <Icon name="phone" size={16} color="#FFF" />
+          <Text style={[styles.actionText, { color: '#FFF' }]}>Call</Text>
         </AnimatedButton>
 
         <AnimatedButton style={[styles.actionBtn, { backgroundColor: '#25D366' }]} onPress={() => onPressAction('whatsapp')}>
@@ -114,9 +114,9 @@ const AajKaKaamCard: React.FC<Props> = ({ data, onPressAction }) => {
           <Text style={[styles.actionText, { color: '#FFF' }]}>WhatsApp</Text>
         </AnimatedButton>
 
-        <AnimatedButton style={[styles.actionBtn, { backgroundColor: '#FFF' }]} onPress={() => onPressAction('directions')}>
-          <Icon name="navigation" size={16} color={colors.primary} />
-          <Text style={[styles.actionText, { color: colors.primary }]}>Directions</Text>
+        <AnimatedButton style={[styles.actionBtn, { backgroundColor: colors.primary }]} onPress={() => onPressAction('directions')}>
+          <Icon name="navigation" size={16} color="#FFF" />
+          <Text style={[styles.actionText, { color: '#FFF' }]}>Directions</Text>
         </AnimatedButton>
       </ScrollView>
     </Animated.View>
@@ -125,6 +125,7 @@ const AajKaKaamCard: React.FC<Props> = ({ data, onPressAction }) => {
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
@@ -136,6 +137,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
   header: {
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

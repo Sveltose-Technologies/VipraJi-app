@@ -70,12 +70,12 @@ const HomeScreen = () => {
         {/* Quick Access Tools */}
         <View style={styles.quickAccessRow}>
           <TouchableOpacity
-            style={[styles.quickAccessCard, { backgroundColor: colors.secondary }]}
+            style={[styles.quickAccessCard, { backgroundColor: colors.success }]}
             onPress={() => navigation.navigate('Panchang')}
             activeOpacity={0.8}
           >
             <View style={styles.quickAccessIconBgWhite}>
-              <Icon name="sun" size={20} color={colors.secondary} />
+              <Icon name="sun" size={20} color={colors.success} />
             </View>
             <View style={styles.quickAccessTextContainer}>
               <Text style={styles.quickAccessTitleWhite}>Panchang</Text>
@@ -100,10 +100,10 @@ const HomeScreen = () => {
         <AajKaKaamCard data={MOCK_AAJ_KA_KAAM} onPressAction={handleAction} />
 
         {/* 2. Daily Spiritual Card */}
-        <View style={[styles.spiritualCard, { backgroundColor: colors.accent + '20', borderColor: colors.accent }]}>
+        <View style={[styles.spiritualCard, { backgroundColor: colors.aajkaBg, borderColor: colors.primary }]}>
           <View style={styles.spiritualHeader}>
-            <Icon name="sun" size={24} color={colors.accent} />
-            <Text style={[styles.spiritualTitle, { color: colors.accent }]}>{t('home.spiritual_card', 'Daily Spiritual Card')}</Text>
+            <Icon name="sun" size={24} color={colors.secondary} />
+            <Text style={[styles.spiritualTitle, { color: colors.secondary }]}>{t('home.spiritual_card', 'Daily Spiritual Card')}</Text>
           </View>
           <View style={styles.spiritualItem}>
             <Text style={[styles.spiritualLabel, { color: colors.text }]}>Today's Thought:</Text>
