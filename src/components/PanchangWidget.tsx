@@ -41,7 +41,7 @@ const PanchangWidget: React.FC<Props> = ({ data }) => {
         <Icon name="calendar" size={18} color={colors.primary} />
         <Text style={[styles.headerTitle, { color: colors.text }]}>Today's Panchang</Text>
       </View>
-      
+
       {/* Horizontal Scroll for primary stats */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollRow}>
         {renderItem('sun', 'Tithi', data.tithi, true)}
@@ -58,19 +58,19 @@ const PanchangWidget: React.FC<Props> = ({ data }) => {
         {data.festivals.length > 0 && (
           <View style={styles.eventRow}>
             <View style={[styles.dot, { backgroundColor: colors.primary }]} />
-            <Text style={[styles.eventText, { color: colors.text }]}>Festival: <Text style={{fontWeight: 'bold'}}>{data.festivals.join(', ')}</Text></Text>
+            <Text style={[styles.eventText, { color: colors.text }]}>Festival: <Text style={{ fontWeight: 'bold' }}>{data.festivals.join(', ')}</Text></Text>
           </View>
         )}
         {data.vrat.length > 0 && (
           <View style={styles.eventRow}>
             <View style={[styles.dot, { backgroundColor: colors.secondary }]} />
-            <Text style={[styles.eventText, { color: colors.text }]}>Vrat: <Text style={{fontWeight: 'bold'}}>{data.vrat.join(', ')}</Text></Text>
+            <Text style={[styles.eventText, { color: colors.text }]}>Vrat: <Text style={{ fontWeight: 'bold' }}>{data.vrat.join(', ')}</Text></Text>
           </View>
         )}
         {data.holidays.length > 0 && (
           <View style={styles.eventRow}>
             <View style={[styles.dot, { backgroundColor: colors.error }]} />
-            <Text style={[styles.eventText, { color: colors.text }]}>Holiday: <Text style={{fontWeight: 'bold'}}>{data.holidays.join(', ')}</Text></Text>
+            <Text style={[styles.eventText, { color: colors.text }]}>Holiday: <Text style={{ fontWeight: 'bold' }}>{data.holidays.join(', ')}</Text></Text>
           </View>
         )}
       </View>

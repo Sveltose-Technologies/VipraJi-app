@@ -33,6 +33,7 @@ import AartiDetailScreen from '../screens/AartiDetailScreen';
 import CommunityScreen from '../screens/CommunityScreen';
 import PostDetailScreen from '../screens/PostDetailScreen';
 import HelpCenterScreen from '../screens/HelpCenterScreen';
+import CreateTicketScreen from '../screens/CreateTicketScreen';
 import SubscriptionScreen from '../screens/SubscriptionScreen';
 import DakshinaCalculatorScreen from '../screens/DakshinaCalculatorScreen';
 import HistoryScreen from '../screens/HistoryScreen';
@@ -66,6 +67,7 @@ export type RootStackParamList = {
   AartiDetail: { aartiId: string };
   PostDetail: { postId: string };
   HelpCenter: undefined;
+  CreateTicket: undefined;
   Subscription: undefined;
   Community: undefined;
   History: undefined;
@@ -175,6 +177,7 @@ const AppNavigator = () => {
           <Stack.Screen name="AartiLibrary" component={AartiLibraryScreen} />
           <Stack.Screen name="AartiDetail" component={AartiDetailScreen} options={{ presentation: 'card' }} />
           <Stack.Screen name="HelpCenter" component={HelpCenterScreen} />
+          <Stack.Screen name="CreateTicket" component={CreateTicketScreen} options={{ presentation: 'modal' }} />
           <Stack.Screen name="Subscription" component={SubscriptionScreen} />
           <Stack.Screen name="Community" component={CommunityScreen} />
           <Stack.Screen name="History" component={HistoryScreen} />

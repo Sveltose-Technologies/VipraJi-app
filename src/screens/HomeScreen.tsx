@@ -42,7 +42,7 @@ const HomeScreen = () => {
         const phone = MOCK_AAJ_KA_KAAM.phone.replace('+', '');
         const url = `https://wa.me/${phone}?text=Namaste`;
         await Linking.openURL(url);
-      } else if (action === 'directions') {
+      } else if (action === 'map') {
         const address = encodeURIComponent(MOCK_AAJ_KA_KAAM.address);
         await Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${address}`);
       }
@@ -70,12 +70,12 @@ const HomeScreen = () => {
         {/* Quick Access Tools */}
         <View style={styles.quickAccessRow}>
           <TouchableOpacity
-            style={[styles.quickAccessCard, { backgroundColor: colors.success }]}
+            style={[styles.quickAccessCard, { backgroundColor: colors.primary }]}
             onPress={() => navigation.navigate('Panchang')}
             activeOpacity={0.8}
           >
             <View style={styles.quickAccessIconBgWhite}>
-              <Icon name="sun" size={20} color={colors.success} />
+              <Icon name="sun" size={20} color={colors.primary} />
             </View>
             <View style={styles.quickAccessTextContainer}>
               <Text style={styles.quickAccessTitleWhite}>Panchang</Text>
@@ -83,12 +83,12 @@ const HomeScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.quickAccessCard, { backgroundColor: colors.success }]}
+            style={[styles.quickAccessCard, { backgroundColor: colors.primary }]}
             onPress={() => navigation.navigate('Kundali')}
             activeOpacity={0.8}
           >
             <View style={styles.quickAccessIconBgWhite}>
-              <Icon name="star" size={20} color={colors.success} />
+              <Icon name="star" size={20} color={colors.primary} />
             </View>
             <View style={styles.quickAccessTextContainer}>
               <Text style={styles.quickAccessTitleWhite}>Kundali</Text>
@@ -102,8 +102,8 @@ const HomeScreen = () => {
         {/* 2. Daily Spiritual Card */}
         <View style={[styles.spiritualCard, { backgroundColor: colors.aajkaBg, borderColor: colors.primary }]}>
           <View style={styles.spiritualHeader}>
-            <Icon name="sun" size={24} color={colors.secondary} />
-            <Text style={[styles.spiritualTitle, { color: colors.secondary }]}>{t('home.spiritual_card', 'Daily Spiritual Card')}</Text>
+            <Icon name="sun" size={24} color={colors.primary} />
+            <Text style={[styles.spiritualTitle, { color: colors.primary }]}>{t('home.spiritual_card', 'Daily Spiritual Card')}</Text>
           </View>
           <View style={styles.spiritualItem}>
             <Text style={[styles.spiritualLabel, { color: colors.text }]}>Today's Thought:</Text>
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   quickAccessCard: {
     flex: 1,
     flexDirection: 'row',
-    padding: 12,
+    padding: 7,
     borderRadius: 12,
     marginHorizontal: 5,
     alignItems: 'center',

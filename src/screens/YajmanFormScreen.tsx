@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Alert, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Alert, StatusBar, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import DatePicker from 'react-native-date-picker';
@@ -21,7 +21,7 @@ const YajmanFormScreen = () => {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { addYajman, updateYajman } = useYajmans();
-  
+
   const existingYajman = route.params?.yajman;
   const isEditing = !!existingYajman;
 
@@ -58,7 +58,7 @@ const YajmanFormScreen = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.name.trim()) newErrors.name = 'Name is required';
     if (!formData.callingMobile.trim()) newErrors.callingMobile = 'Mobile number is required';
-    
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -67,7 +67,7 @@ const YajmanFormScreen = () => {
     setIsSubmitting(true);
     try {
       const formatDate = (date: Date | null) => date ? date.toISOString().split('T')[0] : undefined;
-      
+
       const payload = {
         ...formData,
         birthday: formatDate(dates.birthday),
@@ -81,7 +81,7 @@ const YajmanFormScreen = () => {
       } else {
         await addYajman(payload);
       }
-      
+
       navigation.goBack();
     } catch (error) {
       // Error handled by hook/axios interceptor
@@ -96,15 +96,15 @@ const YajmanFormScreen = () => {
 
   const renderInput = (
     field: keyof typeof formData,
-    label: string, 
-    placeholder: string, 
+    label: string,
+    placeholder: string,
     options?: { keyboardType?: 'numeric' | 'email-address' | 'default', multiline?: boolean }
   ) => (
     <View style={styles.inputGroup}>
       <Text style={[styles.label, { color: colors.text }]}>{label} {errors[field] && <Text style={styles.errorText}>*</Text>}</Text>
       <TextInput
         style={[
-          styles.input, 
+          styles.input,
           { backgroundColor: colors.surface, color: colors.text, borderColor: errors[field] ? '#ef4444' : colors.border },
           options?.multiline && styles.textArea
         ]}
@@ -126,7 +126,7 @@ const YajmanFormScreen = () => {
   const renderDatePicker = (field: keyof typeof dates, label: string) => (
     <View style={styles.inputGroup}>
       <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
-      <TouchableOpacity 
+      <TouchableOpacity
         style={[styles.dateInput, { backgroundColor: colors.surface, borderColor: colors.border }]}
         onPress={() => openDatePicker(field)}
       >
@@ -139,39 +139,35 @@ const YajmanFormScreen = () => {
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background, paddingBottom: insets.bottom }]}>
+    <KeyboardAvoidingView
+      style={[styles.container, { backgroundColor: colors.background, paddingBottom: insets.bottom }]}
+      behavior="padding"
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+    >
       <StatusBar barStyle="light-content" backgroundColor={colors.darkHeader} translucent={true} />
       {/* Custom Header for Modal */}
-      <View style={[styles.header, { backgroundColor: colors.darkHeader, borderBottomColor: colors.darkHeader, paddingTop: Math.max(insets.top, 14) }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerBtn}>
-          <Icon name="x" size={24} color="#FFF" />
-        </TouchableOpacity>
+      <View style={[styles.header, { backgroundColor: colors.darkHeader, borderBottomColor: colors.darkHeader, paddingTop: Math.max(insets.top, 14), justifyContent: 'center' }]}>
         <Text style={[styles.headerTitle, { color: '#FFF' }]}>
           {isEditing ? 'Edit Yajman' : 'New Yajman'}
         </Text>
-        <TouchableOpacity onPress={handleSave} style={styles.headerBtn} disabled={isSubmitting}>
-          <Text style={[styles.saveText, { color: isSubmitting ? 'rgba(255,255,255,0.6)' : '#FFF' }]}>
-            {isSubmitting ? 'Saving...' : 'Save'}
-          </Text>
-        </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.scrollContent} contentContainerStyle={styles.scrollContainer}>
-        
+
         {/* Personal Info */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.primary }]}>Personal Details</Text>
           {renderInput('name', 'Full Name', 'Enter yajman name')}
-          
+
           <View style={styles.inputGroup}>
             <Text style={[styles.label, { color: colors.text }]}>Category</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
+            <View style={styles.categoryWrap}>
               {CATEGORIES.map(cat => (
                 <TouchableOpacity
                   key={cat}
                   style={[
                     styles.categoryChip,
-                    { 
+                    {
                       backgroundColor: formData.category === cat ? colors.primary : colors.surface,
                       borderColor: formData.category === cat ? colors.primary : colors.border
                     }
@@ -181,7 +177,7 @@ const YajmanFormScreen = () => {
                   <Text style={{ color: formData.category === cat ? '#FFF' : colors.text, fontSize: 13 }}>{cat}</Text>
                 </TouchableOpacity>
               ))}
-            </ScrollView>
+            </View>
           </View>
         </View>
 
@@ -200,7 +196,7 @@ const YajmanFormScreen = () => {
             <View style={styles.col}>{renderDatePicker('birthday', 'Birthday')}</View>
             <View style={styles.col}>{renderDatePicker('anniversary', 'Anniversary')}</View>
           </View>
-          
+
           {renderInput('yearlyProgramName', 'Yearly Program Name', 'e.g. Yearly Shraddha / Tithi')}
           {renderDatePicker('yearlyProgramDate', 'Yearly Program Date')}
         </View>
@@ -224,6 +220,26 @@ const YajmanFormScreen = () => {
 
       </ScrollView>
 
+      {/* Bottom Actions */}
+      <View style={[styles.bottomActions, { backgroundColor: colors.surface, borderTopColor: colors.border, paddingBottom: Math.max(insets.bottom, 10) }]}>
+        <TouchableOpacity
+          style={[styles.actionBtn, styles.cancelBtn, { borderColor: colors.border }]}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={[styles.cancelBtnText, { color: colors.text }]}>Cancel</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.actionBtn, styles.saveBtn, { backgroundColor: colors.primary }]}
+          onPress={handleSave}
+          disabled={isSubmitting}
+        >
+          <Text style={[styles.saveBtnText, { color: '#FFF' }]}>
+            {isSubmitting ? 'Saving...' : 'Save'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <DatePicker
         modal
         open={datePickerConfig.open}
@@ -239,7 +255,7 @@ const YajmanFormScreen = () => {
           setDatePickerConfig({ open: false, field: null });
         }}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -328,15 +344,49 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     height: 52,
   },
-  categoryScroll: {
+  categoryWrap: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
   },
   categoryChip: {
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 20,
+    borderRadius: 8,
     borderWidth: 1,
-    marginRight: 8,
+  },
+  bottomActions: {
+    flexDirection: 'row',
+    padding: 10,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    gap: 12,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  actionBtn: {
+    flex: 1,
+    height: 45,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 5
+  },
+  cancelBtn: {
+    borderWidth: 1,
+  },
+  saveBtn: {
+  },
+  cancelBtnText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  saveBtnText: {
+    fontSize: 14,
+    fontWeight: '600',
   }
 });
 

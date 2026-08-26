@@ -66,7 +66,7 @@ const AajKaKaamCard: React.FC<Props> = ({ data, onPressAction }) => {
   });
 
   return (
-    <Animated.View style={[styles.container, { backgroundColor: colors.surface, borderColor: colors.primary, transform: [{ rotateY: spin }] }]}>
+    <Animated.View style={[styles.container, { backgroundColor: colors.background, borderColor: colors.primary, transform: [{ rotateY: spin }] }]}>
       <View style={styles.header}>
         <View style={styles.headerTitleRow}>
           <Icon name="sun" size={20} color={colors.primary} />
@@ -109,14 +109,14 @@ const AajKaKaamCard: React.FC<Props> = ({ data, onPressAction }) => {
           <Text style={[styles.actionText, { color: '#FFF' }]}>Call</Text>
         </AnimatedButton>
 
-        <AnimatedButton style={[styles.actionBtn, { backgroundColor: '#25D366' }]} onPress={() => onPressAction('whatsapp')}>
+        <AnimatedButton style={[styles.actionBtn, { backgroundColor: colors.success }]} onPress={() => onPressAction('whatsapp')}>
           <Icon name="message-circle" size={16} color="#FFF" />
           <Text style={[styles.actionText, { color: '#FFF' }]}>WhatsApp</Text>
         </AnimatedButton>
 
         <AnimatedButton style={[styles.actionBtn, { backgroundColor: colors.primary }]} onPress={() => onPressAction('directions')}>
           <Icon name="navigation" size={16} color="#FFF" />
-          <Text style={[styles.actionText, { color: '#FFF' }]}>Directions</Text>
+          <Text style={[styles.actionText, { color: '#FFF' }]}>Map</Text>
         </AnimatedButton>
       </ScrollView>
     </Animated.View>

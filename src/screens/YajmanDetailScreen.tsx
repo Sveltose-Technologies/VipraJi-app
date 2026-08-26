@@ -17,7 +17,7 @@ const YajmanDetailScreen = () => {
   const route = useRoute<DetailRouteProp>();
   const insets = useSafeAreaInsets();
   const { yajmans, deleteYajman } = useYajmans();
-  
+
   // Get the most up-to-date yajman from the hook in case it was edited
   const yajmanId = route.params.yajman.id;
   const yajman = yajmans.find(y => y.id === yajmanId) || route.params.yajman;
@@ -28,8 +28,8 @@ const YajmanDetailScreen = () => {
       "Are you sure you want to remove this yajman? This action cannot be undone.",
       [
         { text: "Cancel", style: "cancel" },
-        { 
-          text: "Delete", 
+        {
+          text: "Delete",
           style: "destructive",
           onPress: async () => {
             await deleteYajman(yajman.id);
@@ -95,29 +95,24 @@ const YajmanDetailScreen = () => {
           <Icon name="arrow-left" size={24} color="#FFF" />
         </TouchableOpacity>
         <View style={styles.headerRight}>
-          <TouchableOpacity 
-            onPress={() => navigation.navigate('YajmanForm', { yajman })} 
-            style={styles.headerBtn}
-          >
-            <Icon name="edit-2" size={22} color="#FFF" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleDelete} style={styles.headerBtn}>
-            <Icon name="trash-2" size={22} color="#ff6b6b" />
-          </TouchableOpacity>
         </View>
       </View>
 
       <ScrollView style={styles.scrollContent}>
         {/* Profile Header */}
         <View style={styles.profileHeader}>
-          <View style={[styles.avatarBig, { backgroundColor: colors.primary + '20' }]}>
+          <View style={[styles.avatarBig, { backgroundColor: colors.primary + '15' }]}>
             <Text style={[styles.avatarBigText, { color: colors.primary }]}>
               {yajman.name.charAt(0).toUpperCase()}
             </Text>
           </View>
-          <Text style={[styles.name, { color: colors.text }]}>{yajman.name}</Text>
-          <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(yajman.category) + '20' }]}>
-            <Text style={[styles.categoryText, { color: getCategoryColor(yajman.category) }]}>{yajman.category}</Text>
+          <View style={styles.profileHeaderTextContainer}>
+            <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>{yajman.name}</Text>
+            <View style={{ flexDirection: 'row' }}>
+              <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(yajman.category) + '15' }]}>
+                <Text style={[styles.categoryText, { color: getCategoryColor(yajman.category) }]}>{yajman.category}</Text>
+              </View>
+            </View>
           </View>
         </View>
 
@@ -127,7 +122,7 @@ const YajmanDetailScreen = () => {
             <Icon name="phone" size={20} color="#FFF" />
             <Text style={styles.actionBtnText}>Call</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#25D366' }]} onPress={handleWhatsApp}>
+          <TouchableOpacity style={[styles.actionBtn, { backgroundColor: colors.success }]} onPress={handleWhatsApp}>
             <Icon name="message-circle" size={20} color="#FFF" />
             <Text style={styles.actionBtnText}>WhatsApp</Text>
           </TouchableOpacity>
@@ -135,7 +130,7 @@ const YajmanDetailScreen = () => {
 
         {/* Details Card */}
         <View style={[styles.detailsCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          
+
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.primary }]}>Contact Info</Text>
             <InfoRow icon="phone" label="Calling Number" value={yajman.callingMobile} />
@@ -149,10 +144,10 @@ const YajmanDetailScreen = () => {
             <Text style={[styles.sectionTitle, { color: colors.primary }]}>Important Dates</Text>
             <InfoRow icon="gift" label="Birthday" value={formatDate(yajman.birthday)} />
             <InfoRow icon="heart" label="Anniversary" value={formatDate(yajman.anniversary)} />
-            <InfoRow 
-              icon="calendar" 
-              label={yajman.yearlyProgramName || 'Yearly Program'} 
-              value={formatDate(yajman.yearlyProgramDate)} 
+            <InfoRow
+              icon="calendar"
+              label={yajman.yearlyProgramName || 'Yearly Program'}
+              value={formatDate(yajman.yearlyProgramDate)}
             />
           </View>
 
@@ -209,25 +204,33 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   profileHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 32,
+    justifyContent: 'center',
+    paddingVertical: 24,
+    paddingHorizontal: 20,
   },
   avatarBig: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
+    width: 60,
+    height: 60,
+    borderRadius: 32,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
   },
   avatarBigText: {
-    fontSize: 36,
+    fontSize: 20,
     fontWeight: 'bold',
   },
+  profileHeaderTextContainer: {
+    marginLeft: 16,
+    justifyContent: 'center',
+    flexShrink: 1, // Ensures long names wrap or truncate properly without breaking layout
+  },
   name: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 12,
+    marginBottom: 5,
+    textAlign: 'center'
   },
   categoryBadge: {
     paddingHorizontal: 14,
@@ -244,13 +247,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 24,
     gap: 16,
-    marginBottom: 24,
+    marginBottom: 10,
   },
   actionBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
+    paddingVertical: 8,
     paddingHorizontal: 24,
     borderRadius: 25,
     flex: 1,
@@ -263,7 +266,7 @@ const styles = StyleSheet.create({
   },
   actionBtnText: {
     color: '#FFF',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
     marginLeft: 8,
   },
@@ -287,12 +290,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textTransform: 'uppercase',
     letterSpacing: 0.8,
-    marginBottom: 16,
+    marginBottom: 10,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 10,
   },
   infoIconContainer: {
     width: 36,

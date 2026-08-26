@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, RefreshControl, Modal } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/Feather';
@@ -16,7 +16,8 @@ const YajmanListScreen = () => {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const insets = useSafeAreaInsets();
-  const { yajmans, isLoading, refreshYajmans, upcomingEvents } = useYajmans();
+  const { yajmans, isLoading, refreshYajmans, upcomingEvents, deleteYajman } = useYajmans();
+  const [yajmanToDelete, setYajmanToDelete] = useState<Yajman | null>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -57,6 +58,7 @@ const YajmanListScreen = () => {
     <TouchableOpacity 
       style={[styles.yajmanCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
       onPress={() => navigation.navigate('YajmanDetail', { yajman: item })}
+      onLongPress={() => setYajmanToDelete(item)}
       activeOpacity={0.7}
     >
       <View style={styles.cardHeader}>
@@ -69,8 +71,16 @@ const YajmanListScreen = () => {
             {item.city ? <Text style={[styles.yajmanCity, { color: colors.textLight }]}>{item.city}</Text> : null}
           </View>
         </View>
-        <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(item.category) + '20' }]}>
-          <Text style={[styles.categoryText, { color: getCategoryColor(item.category) }]}>{item.category}</Text>
+        <View style={{ alignItems: 'flex-end' }}>
+          <TouchableOpacity 
+            onPress={() => navigation.navigate('YajmanForm', { yajman: item })}
+            style={{ padding: 4, marginBottom: 4 }}
+          >
+            <Icon name="edit-2" size={18} color={colors.textLight} />
+          </TouchableOpacity>
+          <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(item.category) + '20' }]}>
+            <Text style={[styles.categoryText, { color: getCategoryColor(item.category) }]}>{item.category}</Text>
+          </View>
         </View>
       </View>
       
@@ -157,6 +167,46 @@ const YajmanListScreen = () => {
           <Icon name="plus" size={24} color="#FFF" />
         </TouchableOpacity>
       )}
+
+      {/* Modern Delete Modal */}
+      <Modal
+        visible={!!yajmanToDelete}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setYajmanToDelete(null)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
+            <View style={[styles.modalIconContainer, { backgroundColor: '#fee2e2' }]}>
+              <Icon name="alert-triangle" size={28} color="#ef4444" />
+            </View>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Delete Yajman?</Text>
+            <Text style={[styles.modalMessage, { color: colors.textLight }]}>
+              Are you sure you want to remove <Text style={{fontWeight: 'bold', color: colors.text}}>{yajmanToDelete?.name}</Text>? This action cannot be undone.
+            </Text>
+            
+            <View style={styles.modalActions}>
+              <TouchableOpacity 
+                style={[styles.modalBtn, styles.modalCancelBtn, { borderColor: colors.border }]} 
+                onPress={() => setYajmanToDelete(null)}
+              >
+                <Text style={[styles.modalBtnText, { color: colors.text }]}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.modalBtn, styles.modalDeleteBtn]} 
+                onPress={async () => {
+                  if (yajmanToDelete) {
+                    await deleteYajman(yajmanToDelete.id);
+                    setYajmanToDelete(null);
+                  }
+                }}
+              >
+                <Text style={[styles.modalBtnText, { color: '#FFF' }]}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -349,6 +399,66 @@ const styles = StyleSheet.create({
   },
   emptyButtonText: {
     color: '#FFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  modalContent: {
+    width: '100%',
+    borderRadius: 24,
+    padding: 24,
+    alignItems: 'center',
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+  },
+  modalIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  modalMessage: {
+    fontSize: 15,
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 24,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
+  },
+  modalBtn: {
+    flex: 1,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalCancelBtn: {
+    borderWidth: 1,
+  },
+  modalDeleteBtn: {
+    backgroundColor: '#ef4444',
+  },
+  modalBtnText: {
     fontSize: 16,
     fontWeight: '600',
   }
