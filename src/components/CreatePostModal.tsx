@@ -31,16 +31,11 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ visible, onClose, onS
       <View style={styles.overlay}>
         <KeyboardAvoidingView 
           style={[styles.modalContainer, { backgroundColor: colors.background }]} 
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          behavior="padding"
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
         >
-        <View style={[styles.header, { borderBottomColor: colors.border }]}>
-          <TouchableOpacity onPress={onClose} style={styles.iconButton}>
-            <Icon name="x" size={24} color={colors.text} />
-          </TouchableOpacity>
+        <View style={[styles.header, { borderBottomColor: colors.border, justifyContent: 'center' }]}>
           <Text style={[styles.headerTitle, { color: colors.text }]}>Create Post</Text>
-          <TouchableOpacity onPress={handleSubmit} style={styles.iconButton} disabled={!title.trim() || !content.trim()}>
-            <Icon name="send" size={24} color={title.trim() && content.trim() ? colors.primary : colors.textLight} />
-          </TouchableOpacity>
         </View>
 
         <ScrollView contentContainerStyle={styles.content}>
@@ -85,6 +80,22 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ visible, onClose, onS
             multiline
             textAlignVertical="top"
           />
+
+          <View style={styles.actionButtonsContainer}>
+            <TouchableOpacity
+              style={[styles.actionButton, { borderColor: colors.primary, borderWidth: 1, backgroundColor: 'transparent' }]}
+              onPress={onClose}
+            >
+              <Text style={[styles.cancelButtonText, { color: colors.primary }]}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.actionButton, { backgroundColor: title.trim() && content.trim() ? colors.primary : colors.border }]}
+              onPress={handleSubmit}
+              disabled={!title.trim() || !content.trim()}
+            >
+              <Text style={[styles.saveButtonText, { color: title.trim() && content.trim() ? '#FFF' : colors.textLight }]}>Post</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
         </KeyboardAvoidingView>
       </View>
@@ -146,6 +157,28 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
   },
   segmentText: { fontSize: 14, fontWeight: '500' },
+  actionButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 24,
+    gap: 12,
+  },
+  actionButton: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 6,
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  saveButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
 export default CreatePostModal;

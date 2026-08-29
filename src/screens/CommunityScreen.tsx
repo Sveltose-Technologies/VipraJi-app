@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Feather';
 import { Post, PostType } from '../types/community';
-import { MOCK_POSTS } from '../data/mockCommunity';
+import { communityApi } from '../api/community';
 import CreatePostModal from '../components/CreatePostModal';
 import { RootStackParamList } from '../navigation/AppNavigator';
 
@@ -14,29 +15,116 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const CommunityScreen = () => {
   const { colors, isDark } = useTheme();
   const navigation = useNavigation<NavigationProp>();
-  
-  const [posts, setPosts] = useState<Post[]>(MOCK_POSTS);
+  const insets = useSafeAreaInsets();
+
+  const [posts, setPosts] = useState<Post[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [filter, setFilter] = useState<PostType | 'all'>('all');
+  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
 
-  const handleCreatePost = (title: string, content: string, type: PostType) => {
-    const newPost: Post = {
-      id: Math.random().toString(36).substr(2, 9),
+  const loadPosts = async () => {
+    try {
+      const data = await communityApi.getAllPosts();
+      if (Array.isArray(data)) {
+        const mappedPosts = data.map((d: any) => ({
+          id: d._id || d.id || Math.random().toString(),
+          title: d.title || 'Untitled',
+          content: d.description || d.content || '',
+          type: (d.type || 'question').toLowerCase(),
+          author: { id: d.userId || d.adminId || 'unknown', name: 'User', verified: false },
+          createdAt: d.createdAt || new Date().toISOString(),
+          likes: Array.isArray(d.likes) ? d.likes.length : (d.likes || 0),
+          comments: d.comments || [],
+        }));
+        setPosts(mappedPosts);
+      }
+    } catch (error) {
+      console.error('Failed to load posts:', error);
+    }
+  };
+
+  React.useEffect(() => {
+    loadPosts();
+  }, []);
+
+  const handleCreatePost = async (title: string, content: string, type: PostType) => {
+    const optimisticPost: Post = {
+      id: Math.random().toString(),
       title,
       content,
       type,
-      author: { id: 'admin', name: 'You (PanditJi)', verified: true },
+      author: { id: 'STATIC_USER_123', name: 'You', verified: false },
       createdAt: new Date().toISOString(),
       likes: 0,
       comments: [],
     };
-    setPosts([newPost, ...posts]);
+    
+    setPosts(prev => [optimisticPost, ...prev]);
+
+    try {
+      await communityApi.createPost({
+        title,
+        description: content,
+        type: type.charAt(0).toUpperCase() + type.slice(1),
+        tags: []
+      });
+      loadPosts();
+    } catch (error) {
+      console.error('Failed to create post:', error);
+    }
+  };
+
+  const toggleLike = async (postId: string) => {
+    const isLiked = likedPosts.has(postId);
+    
+    setLikedPosts(prev => {
+      const newSet = new Set(prev);
+      if (isLiked) newSet.delete(postId);
+      else newSet.add(postId);
+      return newSet;
+    });
+    
+    setPosts(prev => prev.map(post => {
+      if (post.id === postId) {
+        return {
+          ...post,
+          likes: isLiked ? Math.max(0, post.likes - 1) : post.likes + 1
+        };
+      }
+      return post;
+    }));
+
+    try {
+      if (isLiked) {
+        await communityApi.unlikePost(postId);
+      } else {
+        await communityApi.likePost(postId);
+      }
+    } catch (error) {
+      console.error('Failed to toggle like:', error);
+      // Revert optimistic update
+      setLikedPosts(prev => {
+        const newSet = new Set(prev);
+        if (isLiked) newSet.add(postId);
+        else newSet.delete(postId);
+        return newSet;
+      });
+      setPosts(prev => prev.map(post => {
+        if (post.id === postId) {
+          return {
+            ...post,
+            likes: isLiked ? post.likes + 1 : Math.max(0, post.likes - 1)
+          };
+        }
+        return post;
+      }));
+    }
   };
 
   const filteredPosts = filter === 'all' ? posts : posts.filter(p => p.type === filter);
 
   const getBadgeColor = (type: PostType) => {
-    switch(type) {
+    switch (type) {
       case 'question': return '#F59E0B'; // Orange
       case 'knowledge': return '#16A34A'; // Green
       case 'suggestion': return '#2563EB'; // Blue
@@ -44,9 +132,9 @@ const CommunityScreen = () => {
   };
 
   const renderPost = ({ item }: { item: Post }) => (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={[styles.postCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
-      onPress={() => navigation.navigate('PostDetail', { postId: item.id })}
+      onPress={() => navigation.navigate('PostDetail', { postId: item.id, initialPost: item, initialIsLiked: likedPosts.has(item.id) })}
     >
       <View style={styles.postHeader}>
         <View style={styles.authorContainer}>
@@ -69,29 +157,45 @@ const CommunityScreen = () => {
           </Text>
         </View>
       </View>
-      
+
       <Text style={[styles.postTitle, { color: colors.text }]}>{item.title}</Text>
       <Text style={[styles.postContent, { color: colors.textLight }]} numberOfLines={3}>
         {item.content}
       </Text>
-      
+
       <View style={styles.postFooter}>
-        <View style={styles.footerItem}>
-          <Icon name="heart" size={18} color={colors.textLight} />
-          <Text style={[styles.footerText, { color: colors.textLight }]}>{item.likes}</Text>
-        </View>
-        <View style={styles.footerItem}>
+        <TouchableOpacity 
+          style={styles.footerItem}
+          onPress={() => toggleLike(item.id)}
+        >
+          <Icon 
+            name="heart" 
+            size={18} 
+            color={likedPosts.has(item.id) ? '#ef4444' : colors.textLight} 
+          />
+          <Text style={[styles.footerText, { color: likedPosts.has(item.id) ? '#ef4444' : colors.textLight }]}>
+            {item.likes}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.footerItem}
+          onPress={() => navigation.navigate('PostDetail', { postId: item.id, initialPost: item, initialIsLiked: likedPosts.has(item.id) })}
+        >
           <Icon name="message-square" size={18} color={colors.textLight} />
           <Text style={[styles.footerText, { color: colors.textLight }]}>{item.comments.length}</Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.header}>
-        <Text style={[styles.headerTitle, { color: colors.primaryDark }]}>Community</Text>
+      <StatusBar barStyle="light-content" backgroundColor={colors.darkHeader} translucent={true} />
+      <View style={[styles.header, { backgroundColor: colors.darkHeader, paddingTop: Math.max(insets.top, 20) }]}>
+        <Text style={[styles.headerTitle, { color: '#FFF' }]}>Community</Text>
+      </View>
+
+      <View style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 10 }}>
         <Text style={[styles.headerSubtitle, { color: colors.textLight }]}>
           Share knowledge and discuss with other Pandits.
         </Text>
@@ -123,8 +227,8 @@ const CommunityScreen = () => {
         showsVerticalScrollIndicator={false}
       />
 
-      <TouchableOpacity 
-        style={[styles.fab, { backgroundColor: colors.primary }]}
+      <TouchableOpacity
+        style={[styles.fab, { backgroundColor: colors.primary, bottom: Math.max(insets.bottom + 24, 24) }]}
         onPress={() => setModalVisible(true)}
       >
         <Icon name="edit-2" size={24} color="#FFF" />
@@ -197,8 +301,8 @@ const styles = StyleSheet.create({
   badgeText: { fontSize: 10, fontWeight: 'bold', letterSpacing: 0.5 },
   postTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 8 },
   postContent: { fontSize: 14, lineHeight: 20, marginBottom: 12 },
-  postFooter: { flexDirection: 'row' },
-  footerItem: { flexDirection: 'row', alignItems: 'center', marginRight: 20 },
+  postFooter: { flexDirection: 'row', marginTop: 8 },
+  footerItem: { flexDirection: 'row', alignItems: 'center', marginRight: 20, paddingVertical: 4, paddingRight: 8 },
   footerText: { marginLeft: 6, fontSize: 14, fontWeight: '500' },
   fab: {
     position: 'absolute',

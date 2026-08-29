@@ -12,7 +12,8 @@ export const lightColors = {
   error: '#EF4444',
   border: '#E2E8F0', // Slate-200
   inputBg: '#F1F5F9', // Slate-100
-  notch: '#000000'
+  notch: '#791212ff',
+  aajkaBg:"#8b4545ff"
 };
 
 export const darkColors = {

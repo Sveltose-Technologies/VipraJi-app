@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Keyboa
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Feather';
-import { MOCK_POSTS } from '../data/mockCommunity';
+import { communityApi, communityReplyApi } from '../api/community';
 import { Comment, PostType } from '../types/community';
 
 const PostDetailScreen = () => {
@@ -14,22 +14,77 @@ const PostDetailScreen = () => {
   const postId = route.params?.postId;
   
   // Find the post and hold it in state so we can add comments locally
-  const [post, setPost] = useState(MOCK_POSTS.find(p => p.id === postId) || MOCK_POSTS[0]);
-  const [replyText, setReplyText] = useState('');
+  const [post, setPost] = useState<any>(null);
+  const [isLiked, setIsLiked] = useState(false);
 
-  const handleReply = () => {
-    if (!replyText.trim()) return;
-    
-    const newComment: Comment = {
-      id: Math.random().toString(36).substr(2, 9),
-      author: { id: 'admin', name: 'You (PanditJi)', verified: true },
-      content: replyText.trim(),
-      createdAt: new Date().toISOString(),
-      likes: 0,
+  React.useEffect(() => {
+    const loadPost = async () => {
+      try {
+        const data = await communityApi.getPostById(postId);
+        if (data) {
+          const mappedPost = {
+            id: data._id || data.id,
+            title: data.title || 'Untitled',
+            content: data.description || data.content || '',
+            type: (data.type || 'question').toLowerCase(),
+            author: { id: data.userId || data.adminId || 'unknown', name: 'User', verified: false },
+            createdAt: data.createdAt || new Date().toISOString(),
+            likes: Array.isArray(data.likes) ? data.likes.length : (data.likes || 0),
+            comments: data.comments || [],
+          };
+          setPost(mappedPost);
+        }
+      } catch (error) {
+        console.error('Failed to load post:', error);
+      }
     };
+    if (postId) loadPost();
+  }, [postId]);
+
+  const toggleLike = async () => {
+    if (!post) return;
+    try {
+      if (isLiked) {
+        await communityApi.unlikePost(post.id);
+        setPost({ ...post, likes: Math.max(0, post.likes - 1) });
+        setIsLiked(false);
+      } else {
+        await communityApi.likePost(post.id);
+        setPost({ ...post, likes: post.likes + 1 });
+        setIsLiked(true);
+      }
+    } catch (error) {
+      console.error('Failed to toggle like:', error);
+    }
+  };
+  const [replyText, setReplyText] = useState('');
+  const [isReplying, setIsReplying] = useState(false);
+
+  const handleReply = async () => {
+    if (!replyText.trim() || isReplying) return;
     
-    setPost({ ...post, comments: [...post.comments, newComment] });
-    setReplyText('');
+    try {
+      setIsReplying(true);
+      const response = await communityReplyApi.createReply({
+        postId: post.id,
+        reply: replyText.trim(),
+      });
+      
+      const newComment: Comment = {
+        id: response?._id || Math.random().toString(36).substr(2, 9),
+        author: { id: 'admin', name: 'You (PanditJi)', verified: true },
+        content: replyText.trim(),
+        createdAt: new Date().toISOString(),
+        likes: 0,
+      };
+      
+      setPost({ ...post, comments: [...post.comments, newComment] });
+      setReplyText('');
+    } catch (error) {
+      console.error('Failed to post reply:', error);
+    } finally {
+      setIsReplying(false);
+    }
   };
 
   const getBadgeColor = (type: PostType) => {
@@ -39,6 +94,14 @@ const PostDetailScreen = () => {
       case 'suggestion': return '#2563EB';
     }
   };
+
+  if (!post) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }]}>
+        <Text style={{ color: colors.text }}>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView 
@@ -81,11 +144,18 @@ const PostDetailScreen = () => {
           <Text style={[styles.postContent, { color: colors.text }]}>{post.content}</Text>
           
           <View style={[styles.tagsContainer, { borderBottomColor: colors.border }]}>
-            {post.tags?.map(tag => (
+            {post.tags?.map((tag: string) => (
               <View key={tag} style={[styles.tag, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                 <Text style={[styles.tagText, { color: colors.textLight }]}>#{tag}</Text>
               </View>
             ))}
+          </View>
+          
+          <View style={styles.actionRow}>
+            <TouchableOpacity style={styles.actionBtn} onPress={toggleLike}>
+              <Icon name="heart" size={20} color={isLiked ? '#ef4444' : colors.textLight} />
+              <Text style={[styles.actionText, { color: isLiked ? '#ef4444' : colors.textLight }]}>{post.likes} Likes</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -126,9 +196,9 @@ const PostDetailScreen = () => {
           multiline
         />
         <TouchableOpacity 
-          style={[styles.sendButton, { backgroundColor: replyText.trim() ? colors.primary : colors.border }]}
+          style={[styles.sendButton, { backgroundColor: replyText.trim() && !isReplying ? colors.primary : colors.border }]}
           onPress={handleReply}
-          disabled={!replyText.trim()}
+          disabled={!replyText.trim() || isReplying}
         >
           <Icon name="send" size={20} color="#FFF" />
         </TouchableOpacity>
@@ -169,6 +239,10 @@ const styles = StyleSheet.create({
   tagsContainer: { flexDirection: 'row', flexWrap: 'wrap', paddingBottom: 16, borderBottomWidth: 1 },
   tag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 16, borderWidth: 1, marginRight: 8, marginBottom: 8 },
   tagText: { fontSize: 12 },
+
+  actionRow: { flexDirection: 'row', paddingTop: 16 },
+  actionBtn: { flexDirection: 'row', alignItems: 'center', marginRight: 24 },
+  actionText: { marginLeft: 8, fontSize: 14, fontWeight: '500' },
   
   commentsHeader: { fontSize: 18, fontWeight: 'bold', marginBottom: 16 },
   commentCard: { padding: 16, borderRadius: 12, borderWidth: 1, marginBottom: 12 },

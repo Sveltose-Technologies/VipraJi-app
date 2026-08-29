@@ -93,7 +93,7 @@ const EventModal: React.FC<EventModalProps> = ({
             <TouchableOpacity
               style={[
                 styles.input, 
-                { color: colors.text, borderColor: colors.border, backgroundColor: colors.surface, justifyContent: 'center' }
+                { borderColor: colors.border, backgroundColor: colors.surface, justifyContent: 'center' }
               ]}
               onPress={() => setTimePickerVisible(true)}
             >

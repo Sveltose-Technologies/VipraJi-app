@@ -12,10 +12,10 @@ import { TicketCategory } from '../types/ticket';
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const CATEGORIES: TicketCategory[] = [
-  'Suggestions', 
-  'Content Issues', 
-  'Technical Issues', 
-  'Payment Issues', 
+  'Suggestions',
+  'Content Issues',
+  'Technical Issues',
+  'Payment Issues',
   'Other Queries'
 ];
 
@@ -29,7 +29,7 @@ const CreateTicketScreen = () => {
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
   const [remarks, setRemarks] = useState('');
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -73,17 +73,23 @@ const CreateTicketScreen = () => {
       <TextInput
         style={[
           styles.input,
-          { 
+          {
             backgroundColor: colors.surface,
             borderColor: errors[field] ? colors.error : colors.border,
-            color: colors.text 
+            color: colors.text
           },
           options?.multiline && styles.multilineInput
         ]}
         value={value}
         onChangeText={(text) => {
           onChangeText(text);
-          if (errors[field]) setErrors(e => ({ ...e, [field]: undefined }));
+          if (errors[field]) {
+            setErrors(e => {
+              const newErrors = { ...e };
+              delete newErrors[field];
+              return newErrors;
+            });
+          }
         }}
         placeholder={placeholder}
         placeholderTextColor={colors.textLight}
@@ -96,20 +102,20 @@ const CreateTicketScreen = () => {
   );
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={[styles.container, { backgroundColor: colors.background, paddingBottom: insets.bottom }]}
       behavior="padding"
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
     >
       <StatusBar barStyle="light-content" backgroundColor={colors.darkHeader} translucent={true} />
-      
+
       {/* Custom Header */}
       <View style={[styles.header, { backgroundColor: colors.darkHeader, borderBottomColor: colors.darkHeader, paddingTop: Math.max(insets.top, 14), justifyContent: 'center' }]}>
         <Text style={[styles.headerTitle, { color: '#FFF' }]}>Raise Ticket</Text>
       </View>
 
       <ScrollView style={styles.scrollContent} contentContainerStyle={styles.scrollContainer}>
-        
+
         <View style={styles.section}>
           <Text style={[styles.label, { color: colors.text, marginBottom: 12 }]}>Select Category</Text>
           <View style={styles.categoryWrap}>
@@ -118,7 +124,7 @@ const CreateTicketScreen = () => {
                 key={cat}
                 style={[
                   styles.categoryChip,
-                  { 
+                  {
                     backgroundColor: category === cat ? colors.primary : colors.surface,
                     borderColor: category === cat ? colors.primary : colors.border
                   }
@@ -168,7 +174,7 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     alignItems: 'center',
   },
@@ -183,10 +189,10 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 12,
   },
   inputGroup: {
-    marginBottom: 16,
+    marginBottom: 12,
   },
   label: {
     fontSize: 14,
@@ -197,13 +203,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 12,
     paddingHorizontal: 16,
-    height: 52,
-    fontSize: 15,
+    height: 45,
+    fontSize: 14,
   },
   multilineInput: {
-    height: 120,
+    height: 100,
     paddingTop: 16,
-    paddingBottom: 16,
+    paddingBottom: 10,
   },
   errorText: {
     fontSize: 12,

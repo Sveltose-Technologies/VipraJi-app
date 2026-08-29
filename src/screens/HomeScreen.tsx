@@ -100,7 +100,7 @@ const HomeScreen = () => {
         <AajKaKaamCard data={MOCK_AAJ_KA_KAAM} onPressAction={handleAction} />
 
         {/* 2. Daily Spiritual Card */}
-        <View style={[styles.spiritualCard, { backgroundColor: colors.aajkaBg, borderColor: colors.primary }]}>
+        <View style={[styles.spiritualCard, { backgroundColor: colors.background, borderColor: colors.primary }]}>
           <View style={styles.spiritualHeader}>
             <Icon name="sun" size={24} color={colors.primary} />
             <Text style={[styles.spiritualTitle, { color: colors.primary }]}>{t('home.spiritual_card', 'Daily Spiritual Card')}</Text>
