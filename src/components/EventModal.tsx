@@ -92,7 +92,7 @@ const EventModal: React.FC<EventModalProps> = ({
             <Text style={[styles.label, { color: colors.text }]}>Time</Text>
             <TouchableOpacity
               style={[
-                styles.input, 
+                styles.input,
                 { borderColor: colors.border, backgroundColor: colors.surface, justifyContent: 'center' }
               ]}
               onPress={() => setTimePickerVisible(true)}
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: { fontSize: 18, fontWeight: 'bold' },
   iconButton: { padding: 4 },
-  content: { padding: 20 },
+  content: { paddingHorizontal: 20, paddingBottom: 10 },
   label: { fontSize: 14, fontWeight: '600', marginBottom: 8, marginTop: 16 },
   input: {
     borderWidth: 1,

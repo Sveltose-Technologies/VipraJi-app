@@ -16,6 +16,7 @@ const MenuScreen = () => {
   const { t } = useTranslation();
 
   const menuItems = [
+    { title: t('menu.accountManager', 'Account Manager'), icon: 'pie-chart', screen: 'AccountManagerDashboard' },
     { title: t('menu.yajmanManager', 'Yajman Manager'), icon: 'users', screen: 'YajmanList' },
     { title: t('menu.profile', 'Profile & Branding'), icon: 'user', screen: 'Profile' },
     { title: t('menu.community', 'Community'), icon: 'message-circle', screen: 'Community' },

@@ -40,7 +40,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
   return (
     <View style={{ backgroundColor: colors.darkHeader, paddingTop: insets.top }}>
       <StatusBar backgroundColor={colors.darkHeader} barStyle="light-content" translucent={true} />
-      <View style={[styles.container, { backgroundColor: colors.darkHeader }]}>
+      <View style={[styles.container, { backgroundColor: colors.darkHeader }, isHome && { height: 70 }]}>
         {isHome ? (
           <View style={styles.logoContainer}>
             <Image
@@ -48,7 +48,6 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
               style={styles.logoImage}
               resizeMode="contain"
             />
-            <Text style={[styles.logoText, { color: textColor }]}>Vipra Sathi</Text>
           </View>
         ) : (
           <View style={styles.titleContainer}>
@@ -109,8 +108,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoImage: {
-    width: 28,
-    height: 28,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   logoText: {
     fontSize: 20,

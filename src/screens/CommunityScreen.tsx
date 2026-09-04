@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { Post, PostType } from '../types/community';
 import { communityApi } from '../api/community';
 import CreatePostModal from '../components/CreatePostModal';
+import CustomHeader from '../components/CustomHeader';
 import { RootStackParamList } from '../navigation/AppNavigator';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -134,17 +135,17 @@ const CommunityScreen = () => {
   const renderPost = ({ item }: { item: Post }) => (
     <TouchableOpacity
       style={[styles.postCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
-      onPress={() => navigation.navigate('PostDetail', { postId: item.id, initialPost: item, initialIsLiked: likedPosts.has(item.id) })}
+      onPress={() => navigation.navigate('PostDetail', { postId: item.id })}
     >
       <View style={styles.postHeader}>
         <View style={styles.authorContainer}>
           <View style={[styles.avatar, { backgroundColor: colors.primary + '20' }]}>
-            <Text style={[styles.avatarText, { color: colors.primary }]}>{item.author.name.charAt(0)}</Text>
+            <Text style={[styles.avatarText, { color: colors.primary }]}>{item.author?.name?.charAt(0) || 'U'}</Text>
           </View>
           <View>
             <View style={styles.nameRow}>
-              <Text style={[styles.authorName, { color: colors.text }]}>{item.author.name}</Text>
-              {item.author.verified && <Icon name="check-circle" size={14} color="#16A34A" style={styles.verified} />}
+              <Text style={[styles.authorName, { color: colors.text }]}>{item.author?.name || 'User'}</Text>
+              {item.author?.verified && <Icon name="check-circle" size={14} color="#16A34A" style={styles.verified} />}
             </View>
             <Text style={[styles.time, { color: colors.textLight }]}>
               {new Date(item.createdAt).toLocaleDateString()}
@@ -179,10 +180,10 @@ const CommunityScreen = () => {
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.footerItem}
-          onPress={() => navigation.navigate('PostDetail', { postId: item.id, initialPost: item, initialIsLiked: likedPosts.has(item.id) })}
+          onPress={() => navigation.navigate('PostDetail', { postId: item.id })}
         >
           <Icon name="message-square" size={18} color={colors.textLight} />
-          <Text style={[styles.footerText, { color: colors.textLight }]}>{item.comments.length}</Text>
+          <Text style={[styles.footerText, { color: colors.textLight }]}>{item.comments?.length || 0}</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -190,10 +191,7 @@ const CommunityScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.darkHeader} translucent={true} />
-      <View style={[styles.header, { backgroundColor: colors.darkHeader, paddingTop: Math.max(insets.top, 20) }]}>
-        <Text style={[styles.headerTitle, { color: '#FFF' }]}>Community</Text>
-      </View>
+      <CustomHeader title="Community" showBack={false} />
 
       <View style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 10 }}>
         <Text style={[styles.headerSubtitle, { color: colors.textLight }]}>

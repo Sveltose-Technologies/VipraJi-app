@@ -43,6 +43,9 @@ import YajmanListScreen from '../screens/YajmanListScreen';
 import YajmanFormScreen from '../screens/YajmanFormScreen';
 import YajmanDetailScreen from '../screens/YajmanDetailScreen';
 import { Yajman } from '../types/yajman';
+import AccountManagerDashboardScreen from '../screens/AccountManagerDashboardScreen';
+import EarningEntryScreen from '../screens/EarningEntryScreen';
+import ExpenseEntryScreen from '../screens/ExpenseEntryScreen';
 
 export type RootStackParamList = {
   Auth: undefined;
@@ -77,6 +80,9 @@ export type RootStackParamList = {
   YajmanList: undefined;
   YajmanForm: { yajman?: Yajman }; // Optional for edit mode
   YajmanDetail: { yajman: Yajman };
+  AccountManagerDashboard: undefined;
+  EarningEntry: { defaultCategory?: string };
+  ExpenseEntry: { defaultCategory?: string };
 };
 
 export type AuthStackParamList = {
@@ -188,6 +194,9 @@ const AppNavigator = () => {
           <Stack.Screen name="YajmanList" component={YajmanListScreen} />
           <Stack.Screen name="YajmanForm" component={YajmanFormScreen} options={{ presentation: 'modal' }} />
           <Stack.Screen name="YajmanDetail" component={YajmanDetailScreen} />
+          <Stack.Screen name="AccountManagerDashboard" component={AccountManagerDashboardScreen} />
+          <Stack.Screen name="EarningEntry" component={EarningEntryScreen} options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
+          <Stack.Screen name="ExpenseEntry" component={ExpenseEntryScreen} options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
         </>
       ) : !hasSeenOnboarding ? (
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
