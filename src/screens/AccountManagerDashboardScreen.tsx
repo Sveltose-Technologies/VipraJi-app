@@ -51,11 +51,11 @@ const AccountManagerDashboardScreen = () => {
     <View style={[styles.mainContainer, { backgroundColor: colors.background }]}>
       <CustomHeader title={t('accountManager.title', 'Account Manager')} icon="pie-chart" />
       <ScrollView style={styles.container}>
-        
+
         {/* Main Dashboard Card */}
         <View style={[styles.summaryCard, { backgroundColor: colors.surface }]}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('accountManager.monthlySummary', 'Monthly Summary')}</Text>
-          
+
           <View style={styles.summaryRow}>
             <View style={styles.summaryItem}>
               <Text style={[styles.summaryLabel, { color: colors.textLight }]}>{t('accountManager.aaya', 'Aaya (Income)')}</Text>
@@ -67,7 +67,7 @@ const AccountManagerDashboardScreen = () => {
               <Text style={[styles.summaryAmount, { color: '#ef4444' }]}>₹{dashboardData.monthlyTotal.kharcha.toLocaleString()}</Text>
             </View>
           </View>
-          
+
           <View style={[styles.balanceContainer, { backgroundColor: colors.background }]}>
             <Text style={[styles.balanceLabel, { color: colors.text }]}>{t('accountManager.balance', 'Balance')}</Text>
             <Text style={[styles.balanceAmount, { color: colors.primary }]}>₹{dashboardData.monthlyTotal.balance.toLocaleString()}</Text>
@@ -256,9 +256,9 @@ const styles = StyleSheet.create({
   bottomActions: {
     flexDirection: 'row',
     padding: 16,
-    paddingBottom: 24,
     gap: 12,
     borderTopWidth: 1,
+    margin: 10
   },
   actionBtn: {
     flex: 1,
